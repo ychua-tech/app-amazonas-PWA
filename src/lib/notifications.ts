@@ -72,39 +72,3 @@ export async function registrarParaPush(): Promise<string | null> {
     return null;
   }
 }
-
-export type ResultadoTeste =
-  | { ok: true }
-  | { ok: false; motivo: 'permissao' | 'erro' };
-
-/**
- * Dispara uma notificação local em ~2s — só para DEMONSTRAR o fluxo de
- * oferta relâmpago sem depender do servidor. Em produção o disparo é do backend.
- */
-export async function simularOfertaRelampago(
-  titulo: string,
-  corpo: string,
-): Promise<ResultadoTeste> {
-  try {
-    await prepararCanal();
-    if (!(await garantirPermissao())) return { ok: false, motivo: 'permissao' };
-
-    await Notifications.scheduleNotificationAsync({
-      content: {
-        title: `⚡ ${titulo}`,
-        body: corpo,
-        data: { tipo: 'relampago' },
-        sound: 'default',
-      },
-      trigger: {
-        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-        seconds: 2,
-        repeats: false,
-        channelId: CANAL,
-      },
-    });
-    return { ok: true };
-  } catch {
-    return { ok: false, motivo: 'erro' };
-  }
-}
