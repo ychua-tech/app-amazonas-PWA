@@ -267,6 +267,11 @@ function sair(){
 h('f_relampago').addEventListener('change', e=>{
   h('relampagoCampos').style.display = e.target.checked ? 'block' : 'none';
 });
+// não deixa escolher uma validade que já passou
+{
+  const hoje = new Date();
+  h('f_validade').min = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
+}
 
 // ---------- Cards retráteis (clica no título pra abrir/fechar, lembra o estado) ----------
 document.querySelectorAll('#areaAdmin > .card').forEach(card=>{
@@ -607,6 +612,26 @@ function renderLista(ofertas){
     </div>`).join('');
 }
 
+// <input type=date> ("2026-09-23") vira meia-noite UTC se usar `new Date(string)` direto —
+// no fuso do Brasil isso já é a noite do dia ANTERIOR, então uma oferta "válida até hoje"
+// nascia vencida. Monta a data pelos componentes (ano, mês, dia) pra ficar no fuso local.
+function dataParaFimDoDiaISO(dataStr){
+  const [y,m,d] = dataStr.split('-').map(Number);
+  return new Date(y, m-1, d, 23,59,59,999).toISOString();
+}
+function isoParaDataLocal(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function isoParaDatetimeLocal(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 function editar(o){
   h('formTitulo').textContent = 'Editar oferta';
   h('f_id').value = o.id;
@@ -614,14 +639,14 @@ function editar(o){
   h('f_descricao').value = o.descricao || '';
   h('f_categoria').value = o.categoria;
   h('f_unidade').value = o.unidade || '';
-  h('f_validade').value = (o.validade||'').slice(0,10);
+  h('f_validade').value = isoParaDataLocal(o.validade);
   h('f_precoNormal').value = o.precoNormal;
   h('f_precoOferta').value = o.precoOferta;
   h('f_precoClube').value = o.precoClube ?? '';
   h('f_imagem').value = o.imagem || '';
   h('f_relampago').checked = !!o.relampago;
   h('relampagoCampos').style.display = o.relampago ? 'block' : 'none';
-  h('f_relampagoFim').value = o.relampagoFim ? o.relampagoFim.slice(0,16) : '';
+  h('f_relampagoFim').value = isoParaDatetimeLocal(o.relampagoFim);
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -640,7 +665,7 @@ async function salvarOferta(){
     descricao: h('f_descricao').value.trim(),
     categoria: h('f_categoria').value,
     unidade: h('f_unidade').value.trim(),
-    validade: h('f_validade').value ? new Date(h('f_validade').value).toISOString() : undefined,
+    validade: h('f_validade').value ? dataParaFimDoDiaISO(h('f_validade').value) : undefined,
     precoNormal: h('f_precoNormal').value,
     precoOferta: h('f_precoOferta').value,
     precoClube: h('f_precoClube').value,
