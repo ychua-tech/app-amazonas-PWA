@@ -1,0 +1,21 @@
+[build]
+  command = "npx expo export --platform web --output-dir dist"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# app é uma SPA (client-side routing) — sem isso, atualizar a página numa rota
+# tipo /produto/123 dá 404. Arquivos estáticos reais (manifest, ícones, sw.js)
+# continuam batendo antes desse fallback.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# o navegador/CDN não pode guardar o sw.js em cache — senão o app nunca
+# enxerga a versão nova do service worker.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"

@@ -31,7 +31,15 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
+
+# reference server
+server/node_modules/
+server/db.json
+
+# folha de contato dos recortes (gerada com --contato)
+assets/produtos/_contato.jpg
 
 # typescript
 *.tsbuildinfo

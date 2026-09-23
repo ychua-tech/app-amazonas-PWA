@@ -1,0 +1,41 @@
+/**
+ * Imagens dos produtos (recortadas do encarte por scripts/crop-produtos.mjs).
+ * Provisório — trocar por fotos com fundo branco pelo painel admin (campo `imagem`).
+ * Metro exige require() com caminho literal, por isso o mapa é explícito.
+ */
+export const produtoImagens: Record<string, number> = {
+  'of-101': require('../../assets/produtos/of-101.jpg'),
+  'of-102': require('../../assets/produtos/of-102.jpg'),
+  'of-103': require('../../assets/produtos/of-103.jpg'),
+  'of-104': require('../../assets/produtos/of-104.jpg'),
+  'of-105': require('../../assets/produtos/of-105.jpg'),
+  'of-106': require('../../assets/produtos/of-106.jpg'),
+  'of-107': require('../../assets/produtos/of-107.jpg'),
+  'of-108': require('../../assets/produtos/of-108.jpg'),
+  'of-109': require('../../assets/produtos/of-109.jpg'),
+  'of-110': require('../../assets/produtos/of-110.jpg'),
+  'of-111': require('../../assets/produtos/of-111.jpg'),
+  'of-112': require('../../assets/produtos/of-112.jpg'),
+  'of-113': require('../../assets/produtos/of-113.jpg'),
+  'of-114': require('../../assets/produtos/of-114.jpg'),
+  'of-115': require('../../assets/produtos/of-115.jpg'),
+  'of-116': require('../../assets/produtos/of-116.jpg'),
+  'of-117': require('../../assets/produtos/of-117.jpg'),
+  'of-118': require('../../assets/produtos/of-118.jpg'),
+  'of-119': require('../../assets/produtos/of-119.jpg'),
+  'of-120': require('../../assets/produtos/of-120.jpg'),
+  'of-121': require('../../assets/produtos/of-121.jpg'),
+  'of-122': require('../../assets/produtos/of-122.jpg'),
+  'of-123': require('../../assets/produtos/of-123.jpg'),
+  'of-124': require('../../assets/produtos/of-124.jpg'),
+  'of-125': require('../../assets/produtos/of-125.jpg'),
+  'of-126': require('../../assets/produtos/of-126.jpg'),
+  'of-127': require('../../assets/produtos/of-127.jpg'),
+  'of-128': require('../../assets/produtos/of-128.jpg'),
+  'of-129': require('../../assets/produtos/of-129.jpg'),
+  'of-130': require('../../assets/produtos/of-130.jpg'),
+  'of-131': require('../../assets/produtos/of-131.jpg'),
+  'of-132': require('../../assets/produtos/of-132.jpg'),
+  'of-133': require('../../assets/produtos/of-133.jpg'),
+  'of-134': require('../../assets/produtos/of-134.jpg'),
+};

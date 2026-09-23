@@ -1,0 +1,1904 @@
+{
+ "_comentario": "Catálogo-semente do mercado. Gerado por scripts/gen-catalogo.mjs — expandir/ajustar pelo painel admin.",
+ "produtos": [
+  {
+   "id": "pr-0001-banana-prata",
+   "nome": "Banana Prata",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.99
+  },
+  {
+   "id": "pr-0002-banana-nanica",
+   "nome": "Banana Nanica",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.49
+  },
+  {
+   "id": "pr-0003-banana-maca",
+   "nome": "Banana Maçã",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 6.99
+  },
+  {
+   "id": "pr-0004-maca-gala",
+   "nome": "Maçã Gala",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 8.99
+  },
+  {
+   "id": "pr-0005-maca-fuji",
+   "nome": "Maçã Fuji",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 9.49
+  },
+  {
+   "id": "pr-0006-laranja-pera",
+   "nome": "Laranja Pera",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 4.49
+  },
+  {
+   "id": "pr-0007-laranja-lima",
+   "nome": "Laranja Lima",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.99
+  },
+  {
+   "id": "pr-0008-mexerica-ponkan",
+   "nome": "Mexerica Ponkan",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 8.99
+  },
+  {
+   "id": "pr-0009-mamao-formosa",
+   "nome": "Mamão Formosa",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 6.99
+  },
+  {
+   "id": "pr-0010-mamao-papaya",
+   "nome": "Mamão Papaya",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 9.99
+  },
+  {
+   "id": "pr-0011-melancia",
+   "nome": "Melancia",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 3.29
+  },
+  {
+   "id": "pr-0012-melao-amarelo",
+   "nome": "Melão Amarelo",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 6.99
+  },
+  {
+   "id": "pr-0013-abacaxi-perola",
+   "nome": "Abacaxi Pérola",
+   "categoria": "Hortifruti",
+   "unidade": "un",
+   "preco": 8.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0014-uva-italia",
+   "nome": "Uva Itália",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 14.9
+  },
+  {
+   "id": "pr-0015-manga-palmer",
+   "nome": "Manga Palmer",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 7.99
+  },
+  {
+   "id": "pr-0016-morango",
+   "nome": "Morango",
+   "categoria": "Hortifruti",
+   "unidade": "bandeja 250g",
+   "preco": 9.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0017-abacate",
+   "nome": "Abacate",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 8.99
+  },
+  {
+   "id": "pr-0018-limao-taiti",
+   "nome": "Limão Taiti",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 6.99
+  },
+  {
+   "id": "pr-0019-pera-williams",
+   "nome": "Pera Williams",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 12.9
+  },
+  {
+   "id": "pr-0020-kiwi",
+   "nome": "Kiwi",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 19.9
+  },
+  {
+   "id": "pr-0021-tomate",
+   "nome": "Tomate",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 7.99
+  },
+  {
+   "id": "pr-0022-tomate-cereja",
+   "nome": "Tomate Cereja",
+   "categoria": "Hortifruti",
+   "unidade": "bandeja 300g",
+   "preco": 6.49,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0023-cebola",
+   "nome": "Cebola",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.99
+  },
+  {
+   "id": "pr-0024-cebola-roxa",
+   "nome": "Cebola Roxa",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 8.99
+  },
+  {
+   "id": "pr-0025-alho",
+   "nome": "Alho",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 24.9
+  },
+  {
+   "id": "pr-0026-batata",
+   "nome": "Batata",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 6.49
+  },
+  {
+   "id": "pr-0027-batata-doce",
+   "nome": "Batata Doce",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.99
+  },
+  {
+   "id": "pr-0028-cenoura",
+   "nome": "Cenoura",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.49
+  },
+  {
+   "id": "pr-0029-beterraba",
+   "nome": "Beterraba",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.99
+  },
+  {
+   "id": "pr-0030-abobrinha",
+   "nome": "Abobrinha",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 6.99
+  },
+  {
+   "id": "pr-0031-chuchu",
+   "nome": "Chuchu",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 4.99
+  },
+  {
+   "id": "pr-0032-pepino",
+   "nome": "Pepino",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 5.49
+  },
+  {
+   "id": "pr-0033-pimentao-verde",
+   "nome": "Pimentão Verde",
+   "categoria": "Hortifruti",
+   "unidade": "kg",
+   "preco": 8.99
+  },
+  {
+   "id": "pr-0034-alface-crespa",
+   "nome": "Alface Crespa",
+   "categoria": "Hortifruti",
+   "unidade": "un",
+   "preco": 3.49,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0035-couve-manteiga",
+   "nome": "Couve Manteiga",
+   "categoria": "Hortifruti",
+   "unidade": "maço",
+   "preco": 3.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0036-cheiro-verde",
+   "nome": "Cheiro-verde",
+   "categoria": "Hortifruti",
+   "unidade": "maço",
+   "preco": 3.49,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0037-repolho-verde",
+   "nome": "Repolho Verde",
+   "categoria": "Hortifruti",
+   "unidade": "un",
+   "preco": 4.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0038-brocolis",
+   "nome": "Brócolis",
+   "categoria": "Hortifruti",
+   "unidade": "un",
+   "preco": 7.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0039-mandioca-descascada",
+   "nome": "Mandioca Descascada",
+   "categoria": "Hortifruti",
+   "unidade": "pacote 1kg",
+   "preco": 8.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0040-ovos-brancos",
+   "nome": "Ovos Brancos",
+   "categoria": "Hortifruti",
+   "unidade": "dúzia",
+   "preco": 13.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0041-ovos-caipira",
+   "nome": "Ovos Caipira",
+   "categoria": "Hortifruti",
+   "unidade": "dúzia",
+   "preco": 18.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0042-picanha-bovina",
+   "nome": "Picanha Bovina",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 74.9
+  },
+  {
+   "id": "pr-0043-alcatra-bovina",
+   "nome": "Alcatra Bovina",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 44.9
+  },
+  {
+   "id": "pr-0044-contrafile",
+   "nome": "Contrafilé",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 46.9
+  },
+  {
+   "id": "pr-0045-coxao-mole",
+   "nome": "Coxão Mole",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 42.9
+  },
+  {
+   "id": "pr-0046-coxao-duro",
+   "nome": "Coxão Duro",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 38.9
+  },
+  {
+   "id": "pr-0047-patinho-moido",
+   "nome": "Patinho Moído",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 34.9
+  },
+  {
+   "id": "pr-0048-acem",
+   "nome": "Acém",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 27.9
+  },
+  {
+   "id": "pr-0049-musculo",
+   "nome": "Músculo",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 29.9
+  },
+  {
+   "id": "pr-0050-costela-bovina",
+   "nome": "Costela Bovina",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 32.9
+  },
+  {
+   "id": "pr-0051-fraldinha",
+   "nome": "Fraldinha",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 44.9
+  },
+  {
+   "id": "pr-0052-maminha",
+   "nome": "Maminha",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 45.9
+  },
+  {
+   "id": "pr-0053-cupim",
+   "nome": "Cupim",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 39.9
+  },
+  {
+   "id": "pr-0054-lombo-suino",
+   "nome": "Lombo Suíno",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 24.9
+  },
+  {
+   "id": "pr-0055-pernil-suino",
+   "nome": "Pernil Suíno",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 19.9
+  },
+  {
+   "id": "pr-0056-costela-suina",
+   "nome": "Costela Suína",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 22.9
+  },
+  {
+   "id": "pr-0057-bisteca-suina",
+   "nome": "Bisteca Suína",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 21.9
+  },
+  {
+   "id": "pr-0058-linguica-toscana",
+   "nome": "Linguiça Toscana",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 18.9
+  },
+  {
+   "id": "pr-0059-linguica-calabresa",
+   "nome": "Linguiça Calabresa",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 24.9
+  },
+  {
+   "id": "pr-0060-frango-inteiro-congelado",
+   "nome": "Frango Inteiro Congelado",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 12.9
+  },
+  {
+   "id": "pr-0061-peito-de-frango",
+   "nome": "Peito de Frango",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 16.9
+  },
+  {
+   "id": "pr-0062-coxa-e-sobrecoxa",
+   "nome": "Coxa e Sobrecoxa",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 13.9
+  },
+  {
+   "id": "pr-0063-asa-de-frango",
+   "nome": "Asa de Frango",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 15.9
+  },
+  {
+   "id": "pr-0064-sobrecoxa-seara-iqf",
+   "nome": "Sobrecoxa Seara IQF",
+   "categoria": "Açougue",
+   "unidade": "pacote 1kg",
+   "preco": 15.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0065-file-de-peito-sadia",
+   "nome": "Filé de Peito Sadia",
+   "categoria": "Açougue",
+   "unidade": "pacote 1kg",
+   "preco": 22.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0066-carne-seca",
+   "nome": "Carne Seca",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 59.9
+  },
+  {
+   "id": "pr-0067-bacon-em-pedaco",
+   "nome": "Bacon em Pedaço",
+   "categoria": "Açougue",
+   "unidade": "kg",
+   "preco": 34.9
+  },
+  {
+   "id": "pr-0068-pao-frances",
+   "nome": "Pão Francês",
+   "categoria": "Padaria",
+   "unidade": "kg",
+   "preco": 15.9
+  },
+  {
+   "id": "pr-0069-pao-de-forma-tradicional",
+   "nome": "Pão de Forma Tradicional",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 8.99,
+   "marca": "Pullman",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0070-pao-de-forma-integral",
+   "nome": "Pão de Forma Integral",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 9.99,
+   "marca": "Pullman",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0071-pao-de-hamburguer",
+   "nome": "Pão de Hambúrguer",
+   "categoria": "Padaria",
+   "unidade": "pacote 4un",
+   "preco": 7.49,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0072-pao-de-hot-dog",
+   "nome": "Pão de Hot Dog",
+   "categoria": "Padaria",
+   "unidade": "pacote 8un",
+   "preco": 6.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0073-pao-doce",
+   "nome": "Pão Doce",
+   "categoria": "Padaria",
+   "unidade": "kg",
+   "preco": 24.9
+  },
+  {
+   "id": "pr-0074-pao-de-queijo-congelado",
+   "nome": "Pão de Queijo Congelado",
+   "categoria": "Padaria",
+   "unidade": "pacote 1kg",
+   "preco": 18.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0075-bolo-caseiro-fatiado",
+   "nome": "Bolo Caseiro Fatiado",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 16.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0076-rosca-de-coco",
+   "nome": "Rosca de Coco",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 12.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0077-sonho",
+   "nome": "Sonho",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 4.5,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0078-croissant",
+   "nome": "Croissant",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 5.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0079-baguete",
+   "nome": "Baguete",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 6.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0080-torrada-tradicional",
+   "nome": "Torrada Tradicional",
+   "categoria": "Padaria",
+   "unidade": "pacote 160g",
+   "preco": 6.49,
+   "marca": "Bauducco",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0081-bolo-de-chocolate",
+   "nome": "Bolo de Chocolate",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 22.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0082-panetone",
+   "nome": "Panetone",
+   "categoria": "Padaria",
+   "unidade": "un",
+   "preco": 24.9,
+   "marca": "Bauducco",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0083-queijo-mussarela",
+   "nome": "Queijo Mussarela",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 42.9
+  },
+  {
+   "id": "pr-0084-queijo-prato",
+   "nome": "Queijo Prato",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 44.9
+  },
+  {
+   "id": "pr-0085-queijo-coalho",
+   "nome": "Queijo Coalho",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 46.9
+  },
+  {
+   "id": "pr-0086-queijo-parmesao",
+   "nome": "Queijo Parmesão",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 69.9
+  },
+  {
+   "id": "pr-0087-presunto-cozido",
+   "nome": "Presunto Cozido",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 32.9
+  },
+  {
+   "id": "pr-0088-apresuntado",
+   "nome": "Apresuntado",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 22.9
+  },
+  {
+   "id": "pr-0089-mortadela",
+   "nome": "Mortadela",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 18.9
+  },
+  {
+   "id": "pr-0090-salame",
+   "nome": "Salame",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 59.9
+  },
+  {
+   "id": "pr-0091-peito-de-peru-defumado",
+   "nome": "Peito de Peru Defumado",
+   "categoria": "Frios e Laticínios",
+   "unidade": "kg",
+   "preco": 49.9
+  },
+  {
+   "id": "pr-0092-queijo-minas-frescal",
+   "nome": "Queijo Minas Frescal",
+   "categoria": "Frios e Laticínios",
+   "unidade": "un",
+   "preco": 34.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0093-leite-integral",
+   "nome": "Leite Integral",
+   "categoria": "Frios e Laticínios",
+   "unidade": "un",
+   "preco": 4.99,
+   "marca": "Italac"
+  },
+  {
+   "id": "pr-0094-leite-desnatado",
+   "nome": "Leite Desnatado",
+   "categoria": "Frios e Laticínios",
+   "unidade": "un",
+   "preco": 5.29,
+   "marca": "Italac"
+  },
+  {
+   "id": "pr-0095-leite-semidesnatado",
+   "nome": "Leite Semidesnatado",
+   "categoria": "Frios e Laticínios",
+   "unidade": "un",
+   "preco": 5.09,
+   "marca": "Italac"
+  },
+  {
+   "id": "pr-0096-iogurte-natural",
+   "nome": "Iogurte Natural",
+   "categoria": "Frios e Laticínios",
+   "unidade": "pote 500g",
+   "preco": 6.49,
+   "marca": "Nestlé"
+  },
+  {
+   "id": "pr-0097-iogurte-morango",
+   "nome": "Iogurte Morango",
+   "categoria": "Frios e Laticínios",
+   "unidade": "bandeja 6un",
+   "preco": 4.99,
+   "marca": "Danone",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0098-bebida-lactea",
+   "nome": "Bebida Láctea",
+   "categoria": "Frios e Laticínios",
+   "unidade": "garrafa 900g",
+   "preco": 3.49,
+   "marca": "Itambé"
+  },
+  {
+   "id": "pr-0099-manteiga-com-sal",
+   "nome": "Manteiga com Sal",
+   "categoria": "Frios e Laticínios",
+   "unidade": "pote 200g",
+   "preco": 12.9,
+   "marca": "Aviação"
+  },
+  {
+   "id": "pr-0100-margarina",
+   "nome": "Margarina",
+   "categoria": "Frios e Laticínios",
+   "unidade": "pote 500g",
+   "preco": 8.99,
+   "marca": "Qualy"
+  },
+  {
+   "id": "pr-0101-requeijao-cremoso",
+   "nome": "Requeijão Cremoso",
+   "categoria": "Frios e Laticínios",
+   "unidade": "copo 200g",
+   "preco": 8.49,
+   "marca": "Catupiry"
+  },
+  {
+   "id": "pr-0102-creme-de-leite",
+   "nome": "Creme de Leite",
+   "categoria": "Frios e Laticínios",
+   "unidade": "caixa 200g",
+   "preco": 3.29,
+   "marca": "Nestlé"
+  },
+  {
+   "id": "pr-0103-leite-condensado",
+   "nome": "Leite Condensado",
+   "categoria": "Frios e Laticínios",
+   "unidade": "lata 395g",
+   "preco": 6.99,
+   "marca": "Moça"
+  },
+  {
+   "id": "pr-0104-cream-cheese",
+   "nome": "Cream Cheese",
+   "categoria": "Frios e Laticínios",
+   "unidade": "pote 150g",
+   "preco": 11.9,
+   "marca": "Philadelphia"
+  },
+  {
+   "id": "pr-0105-queijo-ralado",
+   "nome": "Queijo Ralado",
+   "categoria": "Frios e Laticínios",
+   "unidade": "pacote 50g",
+   "preco": 6.99
+  },
+  {
+   "id": "pr-0106-nata",
+   "nome": "Nata",
+   "categoria": "Frios e Laticínios",
+   "unidade": "pote 300g",
+   "preco": 9.9
+  },
+  {
+   "id": "pr-0107-ovo-de-codorna-em-conser",
+   "nome": "Ovo de Codorna em Conserva",
+   "categoria": "Frios e Laticínios",
+   "unidade": "vidro 200g",
+   "preco": 8.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0108-arroz-branco-tipo-1",
+   "nome": "Arroz Branco Tipo 1",
+   "categoria": "Mercearia",
+   "unidade": "pacote 5kg",
+   "preco": 22.9,
+   "marca": "Tio João"
+  },
+  {
+   "id": "pr-0109-arroz-parboilizado",
+   "nome": "Arroz Parboilizado",
+   "categoria": "Mercearia",
+   "unidade": "pacote 5kg",
+   "preco": 24.9,
+   "marca": "Tio João"
+  },
+  {
+   "id": "pr-0110-arroz-integral",
+   "nome": "Arroz Integral",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 9.99,
+   "marca": "Camil"
+  },
+  {
+   "id": "pr-0111-feijao-carioca",
+   "nome": "Feijão Carioca",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 8.49,
+   "marca": "Kicaldo"
+  },
+  {
+   "id": "pr-0112-feijao-preto",
+   "nome": "Feijão Preto",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 8.99,
+   "marca": "Camil"
+  },
+  {
+   "id": "pr-0113-acucar-refinado",
+   "nome": "Açúcar Refinado",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 4.99,
+   "marca": "União"
+  },
+  {
+   "id": "pr-0114-acucar-cristal",
+   "nome": "Açúcar Cristal",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 4.49,
+   "marca": "Caravelas"
+  },
+  {
+   "id": "pr-0115-cafe-torrado-e-moido",
+   "nome": "Café Torrado e Moído",
+   "categoria": "Mercearia",
+   "unidade": "pacote 500g",
+   "preco": 15.9,
+   "marca": "Pilão"
+  },
+  {
+   "id": "pr-0116-cafe-em-capsula",
+   "nome": "Café em Cápsula",
+   "categoria": "Mercearia",
+   "unidade": "caixa 10un",
+   "preco": 24.9,
+   "marca": "Três Corações",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0117-oleo-de-soja",
+   "nome": "Óleo de Soja",
+   "categoria": "Mercearia",
+   "unidade": "garrafa 900ml",
+   "preco": 7.49,
+   "marca": "Soya"
+  },
+  {
+   "id": "pr-0118-oleo-de-girassol",
+   "nome": "Óleo de Girassol",
+   "categoria": "Mercearia",
+   "unidade": "garrafa 900ml",
+   "preco": 12.9,
+   "marca": "Liza"
+  },
+  {
+   "id": "pr-0119-azeite-de-oliva-extravir",
+   "nome": "Azeite de Oliva Extravirgem",
+   "categoria": "Mercearia",
+   "unidade": "garrafa 500ml",
+   "preco": 27.9,
+   "marca": "Gallo"
+  },
+  {
+   "id": "pr-0120-vinagre-de-alcool",
+   "nome": "Vinagre de Álcool",
+   "categoria": "Mercearia",
+   "unidade": "garrafa 750ml",
+   "preco": 3.49,
+   "marca": "Castelo"
+  },
+  {
+   "id": "pr-0121-sal-refinado",
+   "nome": "Sal Refinado",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 2.99,
+   "marca": "Cisne"
+  },
+  {
+   "id": "pr-0122-macarrao-espaguete",
+   "nome": "Macarrão Espaguete",
+   "categoria": "Mercearia",
+   "unidade": "pacote 500g",
+   "preco": 4.49,
+   "marca": "Galo"
+  },
+  {
+   "id": "pr-0123-macarrao-parafuso",
+   "nome": "Macarrão Parafuso",
+   "categoria": "Mercearia",
+   "unidade": "pacote 500g",
+   "preco": 4.49,
+   "marca": "Renata"
+  },
+  {
+   "id": "pr-0124-macarrao-instantaneo",
+   "nome": "Macarrão Instantâneo",
+   "categoria": "Mercearia",
+   "unidade": "un",
+   "preco": 2.29,
+   "marca": "Nissin"
+  },
+  {
+   "id": "pr-0125-molho-de-tomate",
+   "nome": "Molho de Tomate",
+   "categoria": "Mercearia",
+   "unidade": "sachê 340g",
+   "preco": 2.99,
+   "marca": "Fugini"
+  },
+  {
+   "id": "pr-0126-extrato-de-tomate",
+   "nome": "Extrato de Tomate",
+   "categoria": "Mercearia",
+   "unidade": "sachê 300g",
+   "preco": 3.79,
+   "marca": "Elefante"
+  },
+  {
+   "id": "pr-0127-milho-verde-em-conserva",
+   "nome": "Milho Verde em Conserva",
+   "categoria": "Mercearia",
+   "unidade": "lata 170g",
+   "preco": 3.99,
+   "marca": "Quero"
+  },
+  {
+   "id": "pr-0128-ervilha-em-conserva",
+   "nome": "Ervilha em Conserva",
+   "categoria": "Mercearia",
+   "unidade": "lata 170g",
+   "preco": 3.99,
+   "marca": "Quero"
+  },
+  {
+   "id": "pr-0129-seleta-de-legumes",
+   "nome": "Seleta de Legumes",
+   "categoria": "Mercearia",
+   "unidade": "lata 170g",
+   "preco": 4.99,
+   "marca": "Quero"
+  },
+  {
+   "id": "pr-0130-atum-ralado-em-oleo",
+   "nome": "Atum Ralado em Óleo",
+   "categoria": "Mercearia",
+   "unidade": "lata 170g",
+   "preco": 7.99,
+   "marca": "Gomes da Costa"
+  },
+  {
+   "id": "pr-0131-sardinha-em-oleo",
+   "nome": "Sardinha em Óleo",
+   "categoria": "Mercearia",
+   "unidade": "lata 125g",
+   "preco": 6.49,
+   "marca": "Coqueiro"
+  },
+  {
+   "id": "pr-0132-farinha-de-trigo",
+   "nome": "Farinha de Trigo",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 5.49,
+   "marca": "Dona Benta"
+  },
+  {
+   "id": "pr-0133-farinha-de-mandioca",
+   "nome": "Farinha de Mandioca",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 6.99,
+   "marca": "Yoki"
+  },
+  {
+   "id": "pr-0134-fuba-mimoso",
+   "nome": "Fubá Mimoso",
+   "categoria": "Mercearia",
+   "unidade": "pacote 1kg",
+   "preco": 4.29,
+   "marca": "Yoki"
+  },
+  {
+   "id": "pr-0135-amido-de-milho",
+   "nome": "Amido de Milho",
+   "categoria": "Mercearia",
+   "unidade": "caixa 500g",
+   "preco": 6.49,
+   "marca": "Maizena"
+  },
+  {
+   "id": "pr-0136-fermento-em-po",
+   "nome": "Fermento em Pó",
+   "categoria": "Mercearia",
+   "unidade": "lata 100g",
+   "preco": 5.99,
+   "marca": "Royal"
+  },
+  {
+   "id": "pr-0137-aveia-em-flocos",
+   "nome": "Aveia em Flocos",
+   "categoria": "Mercearia",
+   "unidade": "pacote 250g",
+   "preco": 7.49,
+   "marca": "Quaker"
+  },
+  {
+   "id": "pr-0138-leite-em-po-integral",
+   "nome": "Leite em Pó Integral",
+   "categoria": "Mercearia",
+   "unidade": "pacote 400g",
+   "preco": 17.9,
+   "marca": "Ninho"
+  },
+  {
+   "id": "pr-0139-achocolatado-em-po",
+   "nome": "Achocolatado em Pó",
+   "categoria": "Mercearia",
+   "unidade": "pacote 400g",
+   "preco": 8.99,
+   "marca": "Nescau"
+  },
+  {
+   "id": "pr-0140-biscoito-recheado-chocol",
+   "nome": "Biscoito Recheado Chocolate",
+   "categoria": "Mercearia",
+   "unidade": "pacote 130g",
+   "preco": 3.49,
+   "marca": "Trakinas"
+  },
+  {
+   "id": "pr-0141-biscoito-cream-cracker",
+   "nome": "Biscoito Cream Cracker",
+   "categoria": "Mercearia",
+   "unidade": "pacote 400g",
+   "preco": 4.29,
+   "marca": "Vitarella"
+  },
+  {
+   "id": "pr-0142-biscoito-maisena",
+   "nome": "Biscoito Maisena",
+   "categoria": "Mercearia",
+   "unidade": "pacote 400g",
+   "preco": 3.99,
+   "marca": "Piraquê"
+  },
+  {
+   "id": "pr-0143-bolacha-agua-e-sal",
+   "nome": "Bolacha Água e Sal",
+   "categoria": "Mercearia",
+   "unidade": "pacote 400g",
+   "preco": 4.29,
+   "marca": "Marilan"
+  },
+  {
+   "id": "pr-0144-gelatina-sabor-morango",
+   "nome": "Gelatina Sabor Morango",
+   "categoria": "Mercearia",
+   "unidade": "caixa 85g",
+   "preco": 2.49,
+   "marca": "Dr. Oetker"
+  },
+  {
+   "id": "pr-0145-pudim-em-po",
+   "nome": "Pudim em Pó",
+   "categoria": "Mercearia",
+   "unidade": "caixa 100g",
+   "preco": 3.29,
+   "marca": "Fleischmann"
+  },
+  {
+   "id": "pr-0146-tempero-completo",
+   "nome": "Tempero Completo",
+   "categoria": "Mercearia",
+   "unidade": "pote 300g",
+   "preco": 6.99,
+   "marca": "Sazón"
+  },
+  {
+   "id": "pr-0147-caldo-de-galinha",
+   "nome": "Caldo de Galinha",
+   "categoria": "Mercearia",
+   "unidade": "caixa 12 cubos",
+   "preco": 4.49,
+   "marca": "Knorr",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0148-oregano",
+   "nome": "Orégano",
+   "categoria": "Mercearia",
+   "unidade": "pote 10g",
+   "preco": 3.99
+  },
+  {
+   "id": "pr-0149-colorau",
+   "nome": "Colorau",
+   "categoria": "Mercearia",
+   "unidade": "pacote 100g",
+   "preco": 3.49
+  },
+  {
+   "id": "pr-0150-batata-palha",
+   "nome": "Batata Palha",
+   "categoria": "Mercearia",
+   "unidade": "pacote 105g",
+   "preco": 6.99,
+   "marca": "Yoki"
+  },
+  {
+   "id": "pr-0151-amendoim-torrado",
+   "nome": "Amendoim Torrado",
+   "categoria": "Mercearia",
+   "unidade": "pacote 400g",
+   "preco": 7.49,
+   "marca": "Dori"
+  },
+  {
+   "id": "pr-0152-salgadinho-de-milho",
+   "nome": "Salgadinho de Milho",
+   "categoria": "Mercearia",
+   "unidade": "pacote 120g",
+   "preco": 6.99,
+   "marca": "Fandangos"
+  },
+  {
+   "id": "pr-0153-batata-chips",
+   "nome": "Batata Chips",
+   "categoria": "Mercearia",
+   "unidade": "pacote 96g",
+   "preco": 8.99,
+   "marca": "Ruffles"
+  },
+  {
+   "id": "pr-0154-pipoca-de-micro-ondas",
+   "nome": "Pipoca de Micro-ondas",
+   "categoria": "Mercearia",
+   "unidade": "un",
+   "preco": 4.49,
+   "marca": "Yoki"
+  },
+  {
+   "id": "pr-0155-chocolate-ao-leite",
+   "nome": "Chocolate ao Leite",
+   "categoria": "Mercearia",
+   "unidade": "barra 90g",
+   "preco": 7.99,
+   "marca": "Lacta"
+  },
+  {
+   "id": "pr-0156-bombom-sortido",
+   "nome": "Bombom Sortido",
+   "categoria": "Mercearia",
+   "unidade": "caixa 250g",
+   "preco": 15.9,
+   "marca": "Garoto",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0157-doce-de-leite",
+   "nome": "Doce de Leite",
+   "categoria": "Mercearia",
+   "unidade": "pote 400g",
+   "preco": 9.9
+  },
+  {
+   "id": "pr-0158-mel",
+   "nome": "Mel",
+   "categoria": "Mercearia",
+   "unidade": "pote 300g",
+   "preco": 18.9
+  },
+  {
+   "id": "pr-0159-geleia-de-morango",
+   "nome": "Geleia de Morango",
+   "categoria": "Mercearia",
+   "unidade": "pote 230g",
+   "preco": 12.9,
+   "marca": "Queensberry"
+  },
+  {
+   "id": "pr-0160-refrigerante-cola",
+   "nome": "Refrigerante Cola",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 2L",
+   "preco": 9.99,
+   "marca": "Coca-Cola"
+  },
+  {
+   "id": "pr-0161-refrigerante-cola-zero",
+   "nome": "Refrigerante Cola Zero",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 2L",
+   "preco": 9.99,
+   "marca": "Coca-Cola"
+  },
+  {
+   "id": "pr-0162-refrigerante-guarana",
+   "nome": "Refrigerante Guaraná",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 2L",
+   "preco": 8.49,
+   "marca": "Antarctica"
+  },
+  {
+   "id": "pr-0163-refrigerante-laranja",
+   "nome": "Refrigerante Laranja",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 2L",
+   "preco": 7.99,
+   "marca": "Fanta"
+  },
+  {
+   "id": "pr-0164-refrigerante-limao",
+   "nome": "Refrigerante Limão",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 2L",
+   "preco": 7.99,
+   "marca": "Sprite"
+  },
+  {
+   "id": "pr-0165-refrigerante-lata",
+   "nome": "Refrigerante Lata",
+   "categoria": "Bebidas",
+   "unidade": "lata 350ml",
+   "preco": 3.99,
+   "marca": "Coca-Cola"
+  },
+  {
+   "id": "pr-0166-agua-mineral-sem-gas",
+   "nome": "Água Mineral sem Gás",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 1,5L",
+   "preco": 2.49,
+   "marca": "Crystal"
+  },
+  {
+   "id": "pr-0167-agua-mineral-com-gas",
+   "nome": "Água Mineral com Gás",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 1,5L",
+   "preco": 2.99,
+   "marca": "Crystal"
+  },
+  {
+   "id": "pr-0168-agua-mineral-copo",
+   "nome": "Água Mineral Copo",
+   "categoria": "Bebidas",
+   "unidade": "fardo 48un",
+   "preco": 12.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0169-suco-de-uva-integral",
+   "nome": "Suco de Uva Integral",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 1,5L",
+   "preco": 16.9,
+   "marca": "Aurora"
+  },
+  {
+   "id": "pr-0170-suco-de-laranja",
+   "nome": "Suco de Laranja",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 900ml",
+   "preco": 9.99,
+   "marca": "Del Valle"
+  },
+  {
+   "id": "pr-0171-nectar-de-maracuja",
+   "nome": "Néctar de Maracujá",
+   "categoria": "Bebidas",
+   "unidade": "caixa 1L",
+   "preco": 6.49,
+   "marca": "Maguary"
+  },
+  {
+   "id": "pr-0172-suco-em-po-laranja",
+   "nome": "Suco em Pó Laranja",
+   "categoria": "Bebidas",
+   "unidade": "un",
+   "preco": 1.49,
+   "marca": "Tang"
+  },
+  {
+   "id": "pr-0173-refresco-concentrado",
+   "nome": "Refresco Concentrado",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 500ml",
+   "preco": 5.99,
+   "marca": "Tang"
+  },
+  {
+   "id": "pr-0174-cha-gelado-pessego",
+   "nome": "Chá Gelado Pêssego",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 1,5L",
+   "preco": 6.99,
+   "marca": "Lipton"
+  },
+  {
+   "id": "pr-0175-energetico",
+   "nome": "Energético",
+   "categoria": "Bebidas",
+   "unidade": "lata 250ml",
+   "preco": 8.99,
+   "marca": "Red Bull"
+  },
+  {
+   "id": "pr-0176-isotonico",
+   "nome": "Isotônico",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 500ml",
+   "preco": 6.49,
+   "marca": "Gatorade"
+  },
+  {
+   "id": "pr-0177-cerveja-pilsen-lata",
+   "nome": "Cerveja Pilsen Lata",
+   "categoria": "Bebidas",
+   "unidade": "lata 350ml",
+   "preco": 3.79,
+   "marca": "Skol"
+  },
+  {
+   "id": "pr-0178-cerveja-pilsen-long-neck",
+   "nome": "Cerveja Pilsen Long Neck",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 355ml",
+   "preco": 5.49,
+   "marca": "Heineken"
+  },
+  {
+   "id": "pr-0179-cerveja-pilsen-1l",
+   "nome": "Cerveja Pilsen 1L",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 1L",
+   "preco": 8.99,
+   "marca": "Brahma"
+  },
+  {
+   "id": "pr-0180-vinho-tinto-suave",
+   "nome": "Vinho Tinto Suave",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 750ml",
+   "preco": 24.9,
+   "marca": "Pérgola"
+  },
+  {
+   "id": "pr-0181-espumante-moscatel",
+   "nome": "Espumante Moscatel",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 750ml",
+   "preco": 34.9,
+   "marca": "Salton"
+  },
+  {
+   "id": "pr-0182-vodka",
+   "nome": "Vodka",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 900ml",
+   "preco": 39.9,
+   "marca": "Smirnoff"
+  },
+  {
+   "id": "pr-0183-cachaca",
+   "nome": "Cachaça",
+   "categoria": "Bebidas",
+   "unidade": "garrafa 965ml",
+   "preco": 14.9,
+   "marca": "Velho Barreiro"
+  },
+  {
+   "id": "pr-0184-cafe-soluvel",
+   "nome": "Café Solúvel",
+   "categoria": "Bebidas",
+   "unidade": "pote 100g",
+   "preco": 16.9,
+   "marca": "Nescafé"
+  },
+  {
+   "id": "pr-0185-agua-de-coco",
+   "nome": "Água de Coco",
+   "categoria": "Bebidas",
+   "unidade": "caixa 1L",
+   "preco": 7.99,
+   "marca": "Kero Coco"
+  },
+  {
+   "id": "pr-0186-detergente-liquido-neutr",
+   "nome": "Detergente Líquido Neutro",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 2.79,
+   "marca": "Ypê"
+  },
+  {
+   "id": "pr-0187-lava-loucas-concentrado",
+   "nome": "Lava-louças Concentrado",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 9.99,
+   "marca": "Limpol"
+  },
+  {
+   "id": "pr-0188-sabao-em-po",
+   "nome": "Sabão em Pó",
+   "categoria": "Limpeza",
+   "unidade": "caixa 1,6kg",
+   "preco": 16.9,
+   "marca": "Omo"
+  },
+  {
+   "id": "pr-0189-sabao-liquido",
+   "nome": "Sabão Líquido",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 19.9,
+   "marca": "Omo"
+  },
+  {
+   "id": "pr-0190-sabao-em-barra",
+   "nome": "Sabão em Barra",
+   "categoria": "Limpeza",
+   "unidade": "pacote 5un",
+   "preco": 7.99,
+   "marca": "Ypê",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0191-amaciante-concentrado",
+   "nome": "Amaciante Concentrado",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 13.99,
+   "marca": "Downy"
+  },
+  {
+   "id": "pr-0192-amaciante-diluido",
+   "nome": "Amaciante Diluído",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 9.99,
+   "marca": "Comfort"
+  },
+  {
+   "id": "pr-0193-agua-sanitaria",
+   "nome": "Água Sanitária",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 4.49,
+   "marca": "Qboa"
+  },
+  {
+   "id": "pr-0194-desinfetante",
+   "nome": "Desinfetante",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 6.99,
+   "marca": "Pinho Sol"
+  },
+  {
+   "id": "pr-0195-limpador-multiuso",
+   "nome": "Limpador Multiuso",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 5.49,
+   "marca": "Veja"
+  },
+  {
+   "id": "pr-0196-limpa-vidros",
+   "nome": "Limpa Vidros",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 7.99,
+   "marca": "Veja"
+  },
+  {
+   "id": "pr-0197-limpador-perfumado",
+   "nome": "Limpador Perfumado",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 8.49,
+   "marca": " Deo"
+  },
+  {
+   "id": "pr-0198-cloro-gel",
+   "nome": "Cloro Gel",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 8.99,
+   "marca": "Qboa"
+  },
+  {
+   "id": "pr-0199-sapolio-cremoso",
+   "nome": "Sapólio Cremoso",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 3.99,
+   "marca": "Cif"
+  },
+  {
+   "id": "pr-0200-lustra-moveis",
+   "nome": "Lustra-móveis",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 9.9,
+   "marca": "Poliflor"
+  },
+  {
+   "id": "pr-0201-inseticida-aerossol",
+   "nome": "Inseticida Aerossol",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 12.9,
+   "marca": "SBP"
+  },
+  {
+   "id": "pr-0202-esponja-multiuso",
+   "nome": "Esponja Multiuso",
+   "categoria": "Limpeza",
+   "unidade": "pacote 4un",
+   "preco": 2.49,
+   "marca": "Scotch-Brite",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0203-pano-de-chao",
+   "nome": "Pano de Chão",
+   "categoria": "Limpeza",
+   "unidade": "pacote 2un",
+   "preco": 6.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0204-pano-multiuso",
+   "nome": "Pano Multiuso",
+   "categoria": "Limpeza",
+   "unidade": "rolo 50 panos",
+   "preco": 9.99,
+   "marca": "Perfex",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0205-saco-de-lixo-50l",
+   "nome": "Saco de Lixo 50L",
+   "categoria": "Limpeza",
+   "unidade": "pacote 30un",
+   "preco": 8.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0206-saco-de-lixo-100l",
+   "nome": "Saco de Lixo 100L",
+   "categoria": "Limpeza",
+   "unidade": "pacote 20un",
+   "preco": 12.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0207-papel-toalha",
+   "nome": "Papel Toalha",
+   "categoria": "Limpeza",
+   "unidade": "pacote 2 rolos",
+   "preco": 6.49,
+   "marca": "Mili",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0208-guardanapo-de-papel",
+   "nome": "Guardanapo de Papel",
+   "categoria": "Limpeza",
+   "unidade": "pacote 50un",
+   "preco": 3.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0209-alcool-70",
+   "nome": "Álcool 70%",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 6.99,
+   "marca": "Itajá"
+  },
+  {
+   "id": "pr-0210-alcool-em-gel",
+   "nome": "Álcool em Gel",
+   "categoria": "Limpeza",
+   "unidade": "un",
+   "preco": 8.99,
+   "marca": "Itajá"
+  },
+  {
+   "id": "pr-0211-papel-higienico-folha-du",
+   "nome": "Papel Higiênico Folha Dupla",
+   "categoria": "Higiene",
+   "unidade": "pacote 12 rolos",
+   "preco": 21.9,
+   "marca": "Neve",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0212-papel-higienico-folha-si",
+   "nome": "Papel Higiênico Folha Simples",
+   "categoria": "Higiene",
+   "unidade": "pacote 12 rolos",
+   "preco": 14.9,
+   "marca": "Mili",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0213-sabonete-em-barra",
+   "nome": "Sabonete em Barra",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 2.99,
+   "marca": "Dove"
+  },
+  {
+   "id": "pr-0214-sabonete-liquido",
+   "nome": "Sabonete Líquido",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 12.9,
+   "marca": "Protex"
+  },
+  {
+   "id": "pr-0215-shampoo",
+   "nome": "Shampoo",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 14.9,
+   "marca": "Seda"
+  },
+  {
+   "id": "pr-0216-condicionador",
+   "nome": "Condicionador",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 14.9,
+   "marca": "Seda"
+  },
+  {
+   "id": "pr-0217-creme-para-pentear",
+   "nome": "Creme para Pentear",
+   "categoria": "Higiene",
+   "unidade": "pote 300g",
+   "preco": 9.99,
+   "marca": "Salon Line"
+  },
+  {
+   "id": "pr-0218-creme-dental",
+   "nome": "Creme Dental",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 5.99,
+   "marca": "Colgate"
+  },
+  {
+   "id": "pr-0219-escova-de-dente",
+   "nome": "Escova de Dente",
+   "categoria": "Higiene",
+   "unidade": "pacote 3un",
+   "preco": 8.99,
+   "marca": "Oral-B",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0220-enxaguante-bucal",
+   "nome": "Enxaguante Bucal",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 15.9,
+   "marca": "Listerine"
+  },
+  {
+   "id": "pr-0221-fio-dental",
+   "nome": "Fio Dental",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 6.99,
+   "marca": "Oral-B"
+  },
+  {
+   "id": "pr-0222-desodorante-aerossol",
+   "nome": "Desodorante Aerossol",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 12.9,
+   "marca": "Rexona"
+  },
+  {
+   "id": "pr-0223-desodorante-roll-on",
+   "nome": "Desodorante Roll-on",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 10.9,
+   "marca": "Nivea"
+  },
+  {
+   "id": "pr-0224-absorvente-com-abas",
+   "nome": "Absorvente com Abas",
+   "categoria": "Higiene",
+   "unidade": "pacote 8un",
+   "preco": 7.99,
+   "marca": "Always",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0225-protetor-diario",
+   "nome": "Protetor Diário",
+   "categoria": "Higiene",
+   "unidade": "pacote 15un",
+   "preco": 8.99,
+   "marca": "Always",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0226-fralda-descartavel-m",
+   "nome": "Fralda Descartável M",
+   "categoria": "Higiene",
+   "unidade": "pacote 30un",
+   "preco": 44.9,
+   "marca": "Pampers",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0227-fralda-descartavel-g",
+   "nome": "Fralda Descartável G",
+   "categoria": "Higiene",
+   "unidade": "pacote 28un",
+   "preco": 46.9,
+   "marca": "Pampers",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0228-lenco-umedecido",
+   "nome": "Lenço Umedecido",
+   "categoria": "Higiene",
+   "unidade": "pacote 96un",
+   "preco": 12.9,
+   "marca": "Huggies",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0229-aparelho-de-barbear",
+   "nome": "Aparelho de Barbear",
+   "categoria": "Higiene",
+   "unidade": "pacote 2un",
+   "preco": 11.9,
+   "marca": "Gillette",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0230-cotonetes",
+   "nome": "Cotonetes",
+   "categoria": "Higiene",
+   "unidade": "caixa 75un",
+   "preco": 5.49,
+   "marca": "Johnson",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0231-algodao",
+   "nome": "Algodão",
+   "categoria": "Higiene",
+   "unidade": "pacote 100g",
+   "preco": 4.99,
+   "marca": "Nívea"
+  },
+  {
+   "id": "pr-0232-hidratante-corporal",
+   "nome": "Hidratante Corporal",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 18.9,
+   "marca": "Nívea"
+  },
+  {
+   "id": "pr-0233-protetor-solar-fps-30",
+   "nome": "Protetor Solar FPS 30",
+   "categoria": "Higiene",
+   "unidade": "un",
+   "preco": 34.9,
+   "marca": "Sundown"
+  },
+  {
+   "id": "pr-0234-racao-para-caes-adultos",
+   "nome": "Ração para Cães Adultos",
+   "categoria": "Pet",
+   "unidade": "pacote 7kg",
+   "preco": 41.99,
+   "marca": "Pedigree",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0235-racao-para-caes-filhotes",
+   "nome": "Ração para Cães Filhotes",
+   "categoria": "Pet",
+   "unidade": "pacote 3kg",
+   "preco": 39.9,
+   "marca": "Golden",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0236-racao-para-gatos",
+   "nome": "Ração para Gatos",
+   "categoria": "Pet",
+   "unidade": "pacote 3kg",
+   "preco": 38.9,
+   "marca": "Whiskas",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0237-sache-para-caes",
+   "nome": "Sachê para Cães",
+   "categoria": "Pet",
+   "unidade": "un",
+   "preco": 3.49,
+   "marca": "Pedigree"
+  },
+  {
+   "id": "pr-0238-sache-para-gatos",
+   "nome": "Sachê para Gatos",
+   "categoria": "Pet",
+   "unidade": "un",
+   "preco": 2.99,
+   "marca": "Whiskas"
+  },
+  {
+   "id": "pr-0239-areia-higienica-para-gat",
+   "nome": "Areia Higiênica para Gatos",
+   "categoria": "Pet",
+   "unidade": "pacote 4kg",
+   "preco": 22.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0240-petisco-para-caes",
+   "nome": "Petisco para Cães",
+   "categoria": "Pet",
+   "unidade": "pacote 150g",
+   "preco": 12.9,
+   "marca": "Dentastix",
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0241-osso-de-couro",
+   "nome": "Osso de Couro",
+   "categoria": "Pet",
+   "unidade": "pacote 3un",
+   "preco": 8.99,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0242-tapete-higienico",
+   "nome": "Tapete Higiênico",
+   "categoria": "Pet",
+   "unidade": "pacote 30un",
+   "preco": 34.9,
+   "modoVenda": "unidade"
+  },
+  {
+   "id": "pr-0243-shampoo-para-caes",
+   "nome": "Shampoo para Cães",
+   "categoria": "Pet",
+   "unidade": "un",
+   "preco": 16.9,
+   "marca": "Sanol"
+  }
+ ]
+}

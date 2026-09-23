@@ -1,0 +1,17 @@
+{
+  "name": "amazonas-server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "API + painel admin do app Supermercado Amazonas",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env index.js",
+    "dev": "node --env-file-if-exists=.env --watch index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "expo-server-sdk": "^3.10.0",
+    "express": "^4.21.2"
+  }
+}

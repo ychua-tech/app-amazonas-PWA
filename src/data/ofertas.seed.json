@@ -1,0 +1,42 @@
+{
+  "_comentario": "Fonte única das ofertas de exemplo (encarte 'Ofertão da Independência'). O app (src/data/ofertas.ts) e o servidor (scripts/sync-seed.mjs -> server/db.seed.json) leem daqui. Datas de validade são calculadas na carga para o demo não expirar. precoClube é ilustrativo — o encarte não traz preço de sócio.",
+  "ofertas": [
+    { "id": "of-101", "nome": "Lava Roupa em Pó OMO Lavagem Perfumada 700g", "descricao": "Nova fórmula, remove manchas com perfume de longa duração.", "categoria": "Limpeza", "precoNormal": 16.99, "precoOferta": 13.49, "unidade": "un", "perecivel": false },
+    { "id": "of-102", "nome": "Amaciante Downy Concentrado 500ml", "descricao": "Rende como 2L. Perfume intenso.", "categoria": "Limpeza", "precoNormal": 17.99, "precoOferta": 13.99, "unidade": "un" },
+    { "id": "of-103", "nome": "Desinfetante Pinho Bril 500ml", "descricao": "Mata 99,9% das bactérias. Vários perfumes.", "categoria": "Limpeza", "precoNormal": 8.79, "precoOferta": 6.99, "unidade": "un" },
+    { "id": "of-104", "nome": "Limpa Alumínio Praticlar 500ml", "descricao": "Brilho nas panelas sem esforço.", "categoria": "Limpeza", "precoNormal": 6.99, "precoOferta": 5.49, "unidade": "un" },
+    { "id": "of-105", "nome": "Papel Higiênico Mili Folha Dupla 12un", "descricao": "Sensitive Care, folha dupla neutra.", "categoria": "Higiene", "precoNormal": 25.99, "precoOferta": 21.99, "precoClube": 20.99, "unidade": "pacote 12un" },
+    { "id": "of-106", "nome": "Creme de Tratamento Skala 1kg", "descricao": "Linha completa para todos os tipos de cabelo.", "categoria": "Higiene", "precoNormal": 16.99, "precoOferta": 13.99, "unidade": "pote 1kg" },
+    { "id": "of-107", "nome": "Creme Dental Colgate Tripla Ação 90g", "descricao": "Hálito puro e proteção anticárie.", "categoria": "Higiene", "precoNormal": 7.69, "precoOferta": 5.99, "unidade": "un" },
+
+    { "id": "of-108", "nome": "Arroz Manosso Tipo 1 5kg", "descricao": "Grão longo fino, safra nova.", "categoria": "Mercearia", "precoNormal": 25.69, "precoOferta": 19.99, "precoClube": 18.99, "unidade": "pacote 5kg" },
+    { "id": "of-109", "nome": "Feijão Carioca Dona Dê 1kg", "descricao": "Grupo 1, tipo 1. Cozimento rápido.", "categoria": "Mercearia", "precoNormal": 9.99, "precoOferta": 7.99, "unidade": "pacote 1kg" },
+    { "id": "of-110", "nome": "Óleo de Soja Concórdia 900ml", "descricao": "Ideal para o dia a dia da cozinha.", "categoria": "Mercearia", "precoNormal": 10.49, "precoOferta": 8.49, "unidade": "un" },
+    { "id": "of-111", "nome": "Café Tanserra 500g", "descricao": "Torrado e moído, tradicional.", "categoria": "Mercearia", "precoNormal": 30.49, "precoOferta": 24.99, "precoClube": 23.49, "unidade": "pacote 500g", "relampago": true },
+    { "id": "of-112", "nome": "Rosca Adoralle Coco ou Leite 600g", "descricao": "Rosquinhas crocantes para o café.", "categoria": "Padaria", "precoNormal": 9.99, "precoOferta": 7.99, "unidade": "pacote 600g" },
+    { "id": "of-113", "nome": "Macarrão Galo Espaguete nº8 500g", "descricao": "Sêmola de trigo. Não empapa.", "categoria": "Mercearia", "precoNormal": 5.59, "precoOferta": 4.49, "unidade": "pacote 500g" },
+    { "id": "of-114", "nome": "Extrato de Tomate Fugini Sachê 300g", "descricao": "Concentrado, rende mais no molho.", "categoria": "Mercearia", "precoNormal": 3.79, "precoOferta": 2.99, "unidade": "un" },
+    { "id": "of-115", "nome": "Papel Toalha Mili 2 rolos 55 toalhas", "descricao": "Multiuso, alta absorção.", "categoria": "Limpeza", "precoNormal": 7.99, "precoOferta": 6.49, "unidade": "pacote 2 rolos" },
+    { "id": "of-116", "nome": "Ração Maikao Adulto 7kg", "descricao": "Alimento completo para cães adultos.", "categoria": "Pet", "precoNormal": 54.99, "precoOferta": 41.99, "unidade": "pacote 7kg" },
+
+    { "id": "of-117", "nome": "Sobrecoxa de Frango Seara IQF 1kg", "descricao": "Congelada, peça a peça.", "categoria": "Açougue", "precoNormal": 18.99, "precoOferta": 15.99, "unidade": "pacote 1kg", "perecivel": true },
+    { "id": "of-118", "nome": "Coxa de Frango Seara 1kg", "descricao": "Resfriada, sempre fresca.", "categoria": "Açougue", "precoNormal": 15.99, "precoOferta": 12.99, "unidade": "pacote 1kg", "perecivel": true },
+    { "id": "of-119", "nome": "Acém Bovino com Osso", "descricao": "Ótimo para cozidos e caldos.", "categoria": "Açougue", "precoNormal": 29.99, "precoOferta": 25.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-120", "nome": "Corte Americano", "descricao": "Corte especial para o churrasco.", "categoria": "Açougue", "precoNormal": 39.99, "precoOferta": 34.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-121", "nome": "Costela Minga", "descricao": "Suculenta, ideal na brasa ou na panela.", "categoria": "Açougue", "precoNormal": 32.99, "precoOferta": 28.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-122", "nome": "Costela Ripa", "descricao": "Tirinha fina, assa rápido.", "categoria": "Açougue", "precoNormal": 31.99, "precoOferta": 28.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-123", "nome": "Coxão Mole", "descricao": "Macio, versátil para bifes e ensopados.", "categoria": "Açougue", "precoNormal": 48.99, "precoOferta": 43.99, "precoClube": 41.99, "unidade": "kg", "perecivel": true, "relampago": true },
+    { "id": "of-124", "nome": "Ponta de Peito com Osso", "descricao": "Sabor marcante para o feijão e o cozido.", "categoria": "Açougue", "precoNormal": 28.99, "precoOferta": 25.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-125", "nome": "Bisteca Suína", "descricao": "Cortada na hora, do jeito que você pedir.", "categoria": "Açougue", "precoNormal": 23.99, "precoOferta": 20.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-126", "nome": "Picadinho Suíno com Osso", "descricao": "Rende muito na panela de pressão.", "categoria": "Açougue", "precoNormal": 21.99, "precoOferta": 17.99, "unidade": "kg", "perecivel": true },
+
+    { "id": "of-127", "nome": "Cebola Roxa", "descricao": "Selecionada, ideal para saladas.", "categoria": "Hortifruti", "precoNormal": 13.99, "precoOferta": 10.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-128", "nome": "Batata Doce", "descricao": "Fresquinha, direto do produtor.", "categoria": "Hortifruti", "precoNormal": 6.99, "precoOferta": 5.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-129", "nome": "Morango Bandeja 250g", "descricao": "Doce e vermelhinho. Quantidade limitada.", "categoria": "Hortifruti", "precoNormal": 21.99, "precoOferta": 16.99, "unidade": "bandeja 250g", "perecivel": true, "relampago": true },
+    { "id": "of-130", "nome": "Pera", "descricao": "Firme e suculenta.", "categoria": "Hortifruti", "precoNormal": 19.99, "precoOferta": 15.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-131", "nome": "Melão Sapo", "descricao": "No ponto certo de doçura.", "categoria": "Hortifruti", "precoNormal": 15.39, "precoOferta": 11.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-132", "nome": "Mamão Papaya", "descricao": "Maduro, pronto para o café da manhã.", "categoria": "Hortifruti", "precoNormal": 12.99, "precoOferta": 9.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-133", "nome": "Mexerica", "descricao": "Fácil de descascar, bem docinha.", "categoria": "Hortifruti", "precoNormal": 10.89, "precoOferta": 8.99, "unidade": "kg", "perecivel": true },
+    { "id": "of-134", "nome": "Banana Maçã", "descricao": "Da região, madura todos os dias.", "categoria": "Hortifruti", "precoNormal": 5.99, "precoOferta": 4.99, "precoClube": 4.49, "unidade": "kg", "perecivel": true }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "/",
+  "name": "Supermercado Amazonas",
+  "short_name": "Amazonas",
+  "description": "Ofertas da semana, catálogo completo e Clube Amazonas (cashback) do Supermercado Amazonas em Juína/MT. Peça pelo app e receba em casa.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FBF8F4",
+  "theme_color": "#F26522",
+  "categories": ["shopping", "food"],
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

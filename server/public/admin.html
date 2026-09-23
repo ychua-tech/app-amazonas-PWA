@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Painel • Supermercado Amazonas</title>
+<style>
+  :root{
+    --laranja:#F26522; --laranja-escuro:#C74E13; --laranja-suave:#FDE9DE;
+    --texto:#1A1A1A; --muted:#6B6B6B; --fundo:#FFFDFB; --surface:#F4F1ED;
+    --borda:#E7E2DB; --sucesso:#2E9E5B; --perigo:#E5322D;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    background:var(--fundo);color:var(--texto)}
+  header{background:var(--laranja);color:#fff;padding:18px 20px;display:flex;
+    align-items:center;gap:10px}
+  header b{font-size:20px;font-weight:800}
+  header span{opacity:.9;font-size:13px}
+  main{max-width:920px;margin:0 auto;padding:20px;display:grid;gap:20px}
+  .card{background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px}
+  h2{margin:0 0 12px;font-size:17px}
+  label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
+  input,select,textarea{width:100%;padding:10px;border:1px solid var(--borda);
+    border-radius:9px;font:inherit;background:#fff;color:var(--texto)}
+  textarea{min-height:60px;resize:vertical}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+  button{background:var(--laranja);color:#fff;border:0;border-radius:9px;
+    padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}
+  button:hover{background:var(--laranja-escuro)}
+  button.sec{background:transparent;color:var(--laranja);border:1.5px solid var(--laranja)}
+  button.mini{padding:6px 10px;font-size:13px}
+  button.perigo{background:var(--perigo)}
+  .lista{display:grid;gap:10px}
+  .oferta{display:flex;gap:12px;align-items:center;border:1px solid var(--borda);
+    border-radius:11px;padding:10px}
+  .oferta img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--surface)}
+  .oferta .info{flex:1;min-width:0}
+  .oferta .nome{font-weight:700}
+  .oferta .preco{color:var(--laranja);font-weight:700}
+  .oferta .antigo{color:var(--muted);text-decoration:line-through;font-size:13px;margin-left:6px}
+  .tag{display:inline-block;background:var(--laranja-suave);color:var(--laranja-escuro);
+    font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px}
+  .tag.rel{background:var(--laranja-escuro);color:#fff}
+  .aviso{padding:10px 12px;border-radius:9px;font-size:13px;margin-top:10px}
+  .aviso.ok{background:#e5f5ec;color:var(--sucesso)}
+  .aviso.err{background:#fde8e7;color:var(--perigo)}
+  .tokenbar{display:flex;gap:8px;align-items:end}
+  .tokenbar > div{flex:1}
+  small{color:var(--muted)}
+  .pedido{border:1px solid var(--borda);border-radius:11px;padding:12px}
+  .pedido .topo{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+  .pedido .cod{font-weight:800}
+  .pedido .cli{font-size:13px;color:var(--muted);margin:4px 0}
+  .pedido .itens{font-size:13px;margin:6px 0}
+  .pedido .acoes{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .status{font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;text-transform:uppercase}
+  .status.aguardando{background:#fff3cd;color:#8a6d00}
+  .status.aceito{background:#e5f5ec;color:var(--sucesso)}
+  .status.separando{background:var(--laranja-suave);color:var(--laranja-escuro)}
+  .status.saiu_entrega{background:#dbeafe;color:#1e40af}
+  .status.entregue{background:#e5e7eb;color:#374151}
+  .status.cancelado{background:#fde8e7;color:var(--perigo)}
+  .preco-item{display:flex;gap:10px;align-items:center;border:1px solid var(--borda);
+    border-radius:11px;padding:8px 10px}
+  .preco-item.mudou{border-color:var(--laranja);background:var(--laranja-suave)}
+  .preco-item .info{flex:1;min-width:0}
+  .preco-item .nome{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preco-item .meta{color:var(--muted);font-size:12px}
+  .preco-item .campo{display:flex;align-items:center;gap:3px;border:1px solid var(--borda);
+    border-radius:8px;padding:4px 7px;background:#fff}
+  .preco-item .campo.socio{border-style:dashed}
+  .preco-item .campo span{font-size:11px;color:var(--muted);font-weight:700}
+  .preco-item .campo input{width:64px;border:0;padding:2px 0;font-weight:700;text-align:right}
+  .preco-item .campo input:focus{outline:0}
+</style>
+</head>
+<body>
+<header>
+  <b>♥ Amazonas</b><span>Painel de ofertas</span>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Acesso</h2>
+    <div class="tokenbar">
+      <div>
+        <label>Token de administrador</label>
+        <input id="token" type="password" placeholder="cole o token aqui" />
+      </div>
+      <button onclick="salvarToken()">Entrar</button>
+    </div>
+    <small>Definido no servidor pela variável <code>ADMIN_TOKEN</code>.</small>
+    <div id="tokenAviso"></div>
+  </div>
+
+  <div class="card">
+    <h2>Pedidos <span id="pedidosBadge" class="tag" style="display:none"></span></h2>
+    <small>Atualiza sozinho a cada 15s. Ao mudar o status, o cliente recebe uma notificação e acompanha no app.</small>
+    <div id="pedidos" class="lista" style="margin-top:12px"><small>Entre com o token para ver.</small></div>
+  </div>
+
+  <div class="card">
+    <h2>Preços do catálogo <span id="precosBadge" class="tag" style="display:none"></span></h2>
+    <small>Mesmos preços que a área de admin do app. Edite o valor e clique em salvar — o app recebe na próxima abertura.</small>
+    <div class="row" style="margin-top:12px">
+      <div><input id="p_busca" placeholder="Buscar produto ou marca" /></div>
+      <div>
+        <select id="p_categoria">
+          <option value="">Todas as categorias</option>
+          <option>Hortifruti</option><option>Açougue</option><option>Padaria</option>
+          <option>Frios e Laticínios</option><option>Mercearia</option><option>Bebidas</option>
+          <option>Limpeza</option><option>Higiene</option><option>Pet</option>
+        </select>
+      </div>
+    </div>
+    <div id="precosLista" class="lista" style="margin-top:14px;max-height:480px;overflow:auto">
+      <small>Entre com o token para ver.</small>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:14px;align-items:center">
+      <button id="p_salvar" onclick="salvarPrecos()" disabled>Salvar preços</button>
+      <button class="sec" onclick="carregarPrecos()">Recarregar</button>
+    </div>
+    <div id="precosAviso"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="formTitulo">Nova oferta</h2>
+    <input type="hidden" id="f_id" />
+    <label>Nome do produto *</label>
+    <input id="f_nome" placeholder="Ex: Picanha Bovina Resfriada" />
+    <label>Descrição</label>
+    <textarea id="f_descricao" placeholder="Detalhe curto que aparece no app"></textarea>
+    <div class="row3">
+      <div>
+        <label>Categoria</label>
+        <select id="f_categoria">
+          <option>Hortifruti</option><option>Açougue</option><option>Padaria</option>
+          <option>Mercearia</option><option>Bebidas</option>
+          <option>Frios e Laticínios</option><option>Limpeza</option>
+          <option>Higiene</option><option>Pet</option>
+        </select>
+      </div>
+      <div><label>Unidade</label><input id="f_unidade" placeholder="kg, un, pacote 1kg" /></div>
+      <div><label>Validade da oferta</label><input id="f_validade" type="date" /></div>
+    </div>
+    <div class="row3">
+      <div><label>Preço normal *</label><input id="f_precoNormal" type="number" step="0.01" placeholder="74.90" /></div>
+      <div><label>Preço oferta *</label><input id="f_precoOferta" type="number" step="0.01" placeholder="59.90" /></div>
+      <div><label>Preço sócio (opcional)</label><input id="f_precoClube" type="number" step="0.01" placeholder="54.90" /></div>
+    </div>
+    <label>URL da imagem</label>
+    <input id="f_imagem" placeholder="https://... (deixe em branco para usar imagem padrão)" />
+    <label style="display:flex;align-items:center;gap:8px;margin-top:14px">
+      <input type="checkbox" id="f_relampago" style="width:auto" />
+      É oferta relâmpago
+    </label>
+    <div id="relampagoCampos" style="display:none">
+      <label>Relâmpago termina em</label>
+      <input id="f_relampagoFim" type="datetime-local" />
+    </div>
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button onclick="salvarOferta()">Salvar oferta</button>
+      <button class="sec" onclick="limparForm()">Limpar</button>
+    </div>
+    <div id="formAviso"></div>
+  </div>
+
+  <div class="card">
+    <h2>Aviso de abertura do app</h2>
+    <small>Aparece uma vez por dia quando o cliente abre o app. Deixe o título vazio e salve para desativar.</small>
+    <label style="display:flex;align-items:center;gap:8px;margin-top:10px">
+      <input type="checkbox" id="a_ativo" style="width:auto" checked /> Ativo
+    </label>
+    <label>Título</label>
+    <input id="a_titulo" placeholder="Feriado da Independência" />
+    <label>Subtítulo</label>
+    <input id="a_subtitulo" placeholder="Neste feriado vamos trabalhar com horário especial" />
+    <label>Linhas (uma por linha)</label>
+    <textarea id="a_linhas" placeholder="Segunda-feira, 07/09"></textarea>
+    <label>Destaque (texto grande)</label>
+    <input id="a_destaque" placeholder="DAS 6H ÀS 12H" />
+    <label>Rodapé</label>
+    <input id="a_rodape" placeholder="Antecipe as compras ou peça pelo televendas." />
+    <div class="row">
+      <div><label>Televendas (só números, com DDD)</label><input id="a_telefone" placeholder="556635662298" /></div>
+      <div><label>Expira em</label><input id="a_expira" type="date" /></div>
+    </div>
+    <div style="margin-top:14px"><button onclick="salvarAviso()">Salvar aviso</button></div>
+    <div id="avisoAviso"></div>
+  </div>
+
+  <div class="card">
+    <h2>Disparar oferta relâmpago (push)</h2>
+    <small>Envia notificação para todos os aparelhos com o app instalado.</small>
+    <label>Oferta relacionada (opcional)</label>
+    <select id="r_ofertaId"><option value="">— nenhuma —</option></select>
+    <label>Título</label>
+    <input id="r_titulo" placeholder="Refrigerante Cola 2L" />
+    <label>Mensagem</label>
+    <input id="r_mensagem" placeholder="Leve 3 e pague 2 — só nas próximas 2 horas!" />
+    <div style="margin-top:14px">
+      <button class="perigo" onclick="dispararRelampago()">⚡ Enviar agora</button>
+    </div>
+    <div id="pushAviso"></div>
+  </div>
+
+  <div class="card">
+    <h2>Ofertas publicadas</h2>
+    <div id="lista" class="lista"><small>Entre com o token para ver.</small></div>
+  </div>
+</main>
+
+<script>
+const API = location.origin;
+const tokenNaUrl = new URLSearchParams(location.search).get('token');
+let TOKEN = tokenNaUrl || localStorage.getItem('amz_admin_token') || '';
+if (tokenNaUrl) localStorage.setItem('amz_admin_token', tokenNaUrl);
+
+function h(id){ return document.getElementById(id); }
+function aviso(el, msg, tipo){ el.innerHTML = `<div class="aviso ${tipo}">${msg}</div>`;
+  setTimeout(()=>{ el.innerHTML=''; }, 4000); }
+function brl(v){ return (v ?? 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+
+async function req(path, opts={}){
+  const r = await fetch(API + path, {
+    ...opts,
+    headers:{ 'Content-Type':'application/json', 'x-admin-token': TOKEN, ...(opts.headers||{}) }
+  });
+  if(!r.ok){ throw new Error((await r.json().catch(()=>({}))).erro || ('Erro '+r.status)); }
+  return r.json();
+}
+
+function salvarToken(){
+  TOKEN = h('token').value.trim();
+  localStorage.setItem('amz_admin_token', TOKEN);
+  carregar();
+}
+
+h('f_relampago').addEventListener('change', e=>{
+  h('relampagoCampos').style.display = e.target.checked ? 'block' : 'none';
+});
+
+async function carregar(){
+  try{
+    const ofertas = await req('/admin/ofertas');
+    aviso(h('tokenAviso'), 'Token ok — '+ofertas.length+' oferta(s).', 'ok');
+    renderLista(ofertas);
+    const sel = h('r_ofertaId');
+    sel.innerHTML = '<option value="">— nenhuma —</option>' +
+      ofertas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('');
+    carregarAviso();
+    carregarPedidos();
+    carregarPrecos();
+    if(!window._pedidosTimer) window._pedidosTimer = setInterval(carregarPedidos, 15000);
+  }catch(e){
+    aviso(h('tokenAviso'), e.message, 'err');
+    h('lista').innerHTML = '<small>Token inválido ou servidor fora do ar.</small>';
+  }
+}
+
+const FLUXO = ['aguardando','aceito','separando','saiu_entrega','entregue'];
+const ROTULO_STATUS = {
+  aguardando:'Aguardando', aceito:'Aceito', separando:'Separando',
+  saiu_entrega:'Saiu p/ entrega', entregue:'Entregue', cancelado:'Cancelado'
+};
+
+async function carregarPedidos(){
+  let pedidos;
+  try{ pedidos = await req('/admin/pedidos'); }
+  catch{ return; }
+
+  const abertos = pedidos.filter(p=>!['entregue','cancelado'].includes(p.status));
+  const badge = h('pedidosBadge');
+  if(abertos.length){ badge.style.display='inline-block'; badge.textContent = abertos.length+' aberto(s)'; }
+  else badge.style.display='none';
+
+  if(!pedidos.length){ h('pedidos').innerHTML = '<small>Nenhum pedido ainda.</small>'; return; }
+
+  h('pedidos').innerHTML = pedidos.slice(0,20).map(p=>{
+    const idx = FLUXO.indexOf(p.status);
+    const proximo = idx>=0 && idx < FLUXO.length-1 ? FLUXO[idx+1] : null;
+    const fmtPeso = (kg)=> kg<1 ? Math.round(kg*1000)+' g' : kg.toLocaleString('pt-BR')+' kg';
+    const itens = p.itens.map(i=> i.modo==='peso'
+      ? `${i.nome} (${i.quantidade>1?i.quantidade+'x ':''}≈${fmtPeso(i.pesoKg||0)})`
+      : `${i.quantidade}x ${i.nome}`).join(', ');
+    return `<div class="pedido">
+      <div class="topo">
+        <span class="cod">${p.codigo}</span>
+        <span class="status ${p.status}">${ROTULO_STATUS[p.status]||p.status}</span>
+      </div>
+      <div class="cli">${p.cliente.nome} · ${p.cliente.telefone||''}<br>${p.cliente.endereco||''} ${p.cliente.bairro?'· '+p.cliente.bairro:''}</div>
+      <div class="itens">${itens}<br>
+        ${p.cashbackUsado>0?`Subtotal ${brl(p.subtotal)} · Cashback -${brl(p.cashbackUsado)}<br><b>Total ${brl(p.total)}</b>`:`<b>${brl(p.subtotal)}</b>`}
+        · ${p.pagamento||'pagamento a combinar'}${p.trocoPara?' (troco p/ '+p.trocoPara+')':''}</div>
+      ${p.observacao?`<div class="cli">Obs: ${p.observacao}</div>`:''}
+      <div class="acoes">
+        ${proximo?`<button class="mini" onclick="mudarStatus('${p.id}','${proximo}')">▶ ${ROTULO_STATUS[proximo]}</button>`:''}
+        ${!['entregue','cancelado'].includes(p.status)?`<button class="mini perigo" onclick="cancelarPedido('${p.id}')">Cancelar</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function mudarStatus(id, status){
+  try{
+    await req('/admin/pedidos/'+id+'/status', { method:'POST', body: JSON.stringify({ status }) });
+    carregarPedidos();
+  }catch(e){ alert(e.message); }
+}
+async function cancelarPedido(id){
+  const motivo = prompt('Motivo do cancelamento (opcional):') ?? '';
+  try{
+    await req('/admin/pedidos/'+id+'/status', { method:'POST', body: JSON.stringify({ status:'cancelado', motivo }) });
+    carregarPedidos();
+  }catch(e){ alert(e.message); }
+}
+
+// ---------- Preços do catálogo ----------
+let PRODUTOS = [];
+const EDICOES = {}; // id -> { preco?:string, precoClube?:string }
+
+const semAcento = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function paraNum(txt){
+  const n = Number(String(txt).replace(',', '.').trim());
+  return Number.isFinite(n) && n > 0 ? Math.round(n*100)/100 : null;
+}
+const moeda = n => (n==null ? '' : String(n).replace('.', ','));
+
+async function carregarPrecos(){
+  try{
+    PRODUTOS = await req('/admin/produtos');
+    for(const k in EDICOES) delete EDICOES[k];
+    renderPrecos();
+    atualizarPrecosBadge();
+  }catch(e){
+    h('precosLista').innerHTML = '<small>Não foi possível carregar o catálogo.</small>';
+  }
+}
+
+function precosFiltrados(){
+  const termo = semAcento(h('p_busca').value);
+  const cat = h('p_categoria').value;
+  return PRODUTOS.filter(p=>{
+    if(cat && p.categoria !== cat) return false;
+    if(!termo) return true;
+    return semAcento(p.nome).includes(termo) || semAcento(p.marca).includes(termo);
+  });
+}
+
+function renderPrecos(){
+  const lista = precosFiltrados();
+  if(!PRODUTOS.length){ h('precosLista').innerHTML = '<small>Entre com o token para ver.</small>'; return; }
+  if(!lista.length){ h('precosLista').innerHTML = '<small>Nada encontrado.</small>'; return; }
+  h('precosLista').innerHTML = lista.slice(0, 300).map(p=>{
+    const e = EDICOES[p.id] || {};
+    const preco = e.preco !== undefined ? e.preco : moeda(p.preco);
+    const clube = e.precoClube !== undefined ? e.precoClube : moeda(p.precoClube);
+    return `<div class="preco-item" data-id="${p.id}">
+      <div class="info">
+        <div class="nome">${p.nome}${p.marca ? ' · <span style="font-weight:400;color:var(--muted)">'+p.marca+'</span>' : ''}</div>
+        <div class="meta">por ${p.unidade||'un'} · ${p.categoria}</div>
+      </div>
+      <div class="campo"><span>R$</span><input inputmode="decimal" data-id="${p.id}" data-campo="preco" value="${preco}" /></div>
+      <div class="campo socio"><span>♥</span><input inputmode="decimal" data-id="${p.id}" data-campo="precoClube" placeholder="sócio" value="${clube}" /></div>
+    </div>`;
+  }).join('');
+  h('precosLista').querySelectorAll('input[data-campo]').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      const { id, campo } = inp.dataset;
+      (EDICOES[id] = EDICOES[id] || {})[campo] = inp.value;
+      const item = h('precosLista').querySelector(`.preco-item[data-id="${id}"]`);
+      if(item) item.classList.toggle('mudou', linhaMudou(id));
+      atualizarPrecosBadge();
+    });
+  });
+}
+
+/** Produtos com alteração válida → payload [{ id, preco?, precoClube? }]. */
+function precosPendentes(){
+  const out = [];
+  for(const p of PRODUTOS){
+    const e = EDICOES[p.id];
+    if(!e) continue;
+    const linha = { id: p.id };
+    let mudou = false;
+    if(e.preco !== undefined){
+      const n = paraNum(e.preco);
+      if(n != null && n !== p.preco){ linha.preco = n; mudou = true; }
+    }
+    if(e.precoClube !== undefined){
+      const txt = String(e.precoClube).trim();
+      if(txt === '' && p.precoClube != null){ linha.precoClube = ''; mudou = true; }
+      else if(txt !== ''){
+        const n = paraNum(txt);
+        if(n != null && n !== p.precoClube){ linha.precoClube = n; mudou = true; }
+      }
+    }
+    if(mudou) out.push(linha);
+  }
+  return out;
+}
+function linhaMudou(id){ return precosPendentes().some(x=>x.id===id); }
+
+function atualizarPrecosBadge(){
+  const n = precosPendentes().length;
+  const badge = h('precosBadge');
+  if(n){ badge.style.display='inline-block'; badge.textContent = n+' alterado(s)'; }
+  else badge.style.display='none';
+  h('p_salvar').disabled = n === 0;
+  h('p_salvar').textContent = n ? `Salvar ${n} ${n===1?'preço':'preços'}` : 'Salvar preços';
+}
+
+async function salvarPrecos(){
+  const pendentes = precosPendentes();
+  if(!pendentes.length) return;
+  h('p_salvar').disabled = true;
+  try{
+    const r = await req('/admin/produtos/precos', { method:'POST', body: JSON.stringify(pendentes) });
+    aviso(h('precosAviso'), `${r.atualizados.length} preço(s) salvos.` + (r.ignorados.length ? ` ${r.ignorados.length} ignorado(s).` : ''), 'ok');
+    await carregarPrecos();
+  }catch(e){
+    aviso(h('precosAviso'), e.message, 'err');
+    h('p_salvar').disabled = false;
+  }
+}
+
+h('p_busca').addEventListener('input', renderPrecos);
+h('p_categoria').addEventListener('change', renderPrecos);
+
+async function carregarAviso(){
+  try{
+    const a = await req('/admin/aviso');
+    if(!a) return;
+    h('a_ativo').checked = a.ativo !== false;
+    h('a_titulo').value = a.titulo || '';
+    h('a_subtitulo').value = a.subtitulo || '';
+    h('a_linhas').value = (a.linhas || []).join('\n');
+    h('a_destaque').value = a.destaque || '';
+    h('a_rodape').value = a.rodape || '';
+    h('a_telefone').value = a.telefone || '';
+    h('a_expira').value = (a.expira || '').slice(0,10);
+  }catch{}
+}
+
+async function salvarAviso(){
+  const body = {
+    ativo: h('a_ativo').checked,
+    titulo: h('a_titulo').value.trim(),
+    subtitulo: h('a_subtitulo').value.trim(),
+    linhas: h('a_linhas').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    destaque: h('a_destaque').value.trim(),
+    rodape: h('a_rodape').value.trim(),
+    telefone: h('a_telefone').value.replace(/\D/g,''),
+    expira: h('a_expira').value ? new Date(h('a_expira').value).toISOString() : undefined,
+  };
+  try{
+    await req('/admin/aviso', { method:'POST', body: JSON.stringify(body) });
+    aviso(h('avisoAviso'), body.titulo ? 'Aviso salvo!' : 'Aviso desativado.', 'ok');
+  }catch(e){ aviso(h('avisoAviso'), e.message, 'err'); }
+}
+
+function renderLista(ofertas){
+  if(!ofertas.length){ h('lista').innerHTML = '<small>Nenhuma oferta ainda.</small>'; return; }
+  h('lista').innerHTML = ofertas.map(o=>`
+    <div class="oferta">
+      <img src="${o.imagem}" alt="" />
+      <div class="info">
+        <div class="nome">${o.nome}
+          ${o.relampago ? '<span class="tag rel">⚡ relâmpago</span>' : ''}
+          <span class="tag">${o.categoria}</span>
+        </div>
+        <div><span class="preco">${brl(o.precoOferta)}</span>
+          <span class="antigo">${brl(o.precoNormal)}</span>
+          ${o.precoClube!=null ? ' • sócio '+brl(o.precoClube) : ''}
+        </div>
+      </div>
+      <button class="mini sec" onclick='editar(${JSON.stringify(o)})'>Editar</button>
+      <button class="mini perigo" onclick="remover('${o.id}')">Excluir</button>
+    </div>`).join('');
+}
+
+function editar(o){
+  h('formTitulo').textContent = 'Editar oferta';
+  h('f_id').value = o.id;
+  h('f_nome').value = o.nome;
+  h('f_descricao').value = o.descricao || '';
+  h('f_categoria').value = o.categoria;
+  h('f_unidade').value = o.unidade || '';
+  h('f_validade').value = (o.validade||'').slice(0,10);
+  h('f_precoNormal').value = o.precoNormal;
+  h('f_precoOferta').value = o.precoOferta;
+  h('f_precoClube').value = o.precoClube ?? '';
+  h('f_imagem').value = o.imagem || '';
+  h('f_relampago').checked = !!o.relampago;
+  h('relampagoCampos').style.display = o.relampago ? 'block' : 'none';
+  h('f_relampagoFim').value = o.relampagoFim ? o.relampagoFim.slice(0,16) : '';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function limparForm(){
+  ['f_id','f_nome','f_descricao','f_unidade','f_validade','f_precoNormal',
+   'f_precoOferta','f_precoClube','f_imagem','f_relampagoFim'].forEach(id=>h(id).value='');
+  h('f_relampago').checked = false;
+  h('relampagoCampos').style.display = 'none';
+  h('formTitulo').textContent = 'Nova oferta';
+}
+
+async function salvarOferta(){
+  const body = {
+    id: h('f_id').value || undefined,
+    nome: h('f_nome').value.trim(),
+    descricao: h('f_descricao').value.trim(),
+    categoria: h('f_categoria').value,
+    unidade: h('f_unidade').value.trim(),
+    validade: h('f_validade').value ? new Date(h('f_validade').value).toISOString() : undefined,
+    precoNormal: h('f_precoNormal').value,
+    precoOferta: h('f_precoOferta').value,
+    precoClube: h('f_precoClube').value,
+    imagem: h('f_imagem').value.trim(),
+    relampago: h('f_relampago').checked,
+    relampagoFim: h('f_relampagoFim').value ? new Date(h('f_relampagoFim').value).toISOString() : undefined,
+  };
+  try{
+    await req('/admin/ofertas', { method:'POST', body: JSON.stringify(body) });
+    aviso(h('formAviso'), 'Oferta salva!', 'ok');
+    limparForm(); carregar();
+  }catch(e){ aviso(h('formAviso'), e.message, 'err'); }
+}
+
+async function remover(id){
+  if(!confirm('Excluir esta oferta?')) return;
+  try{ await req('/admin/ofertas/'+id, { method:'DELETE' }); carregar(); }
+  catch(e){ alert(e.message); }
+}
+
+async function dispararRelampago(){
+  const body = {
+    ofertaId: h('r_ofertaId').value || undefined,
+    titulo: h('r_titulo').value.trim(),
+    mensagem: h('r_mensagem').value.trim(),
+  };
+  if(!body.titulo || !body.mensagem){ aviso(h('pushAviso'),'Preencha título e mensagem.','err'); return; }
+  if(!confirm('Enviar notificação para todos os aparelhos?')) return;
+  try{
+    const r = await req('/admin/relampago', { method:'POST', body: JSON.stringify(body) });
+    aviso(h('pushAviso'), `Enviado para ${r.enviadas} de ${r.dispositivos} aparelho(s).`, 'ok');
+    carregar();
+  }catch(e){ aviso(h('pushAviso'), e.message, 'err'); }
+}
+
+if(TOKEN){ h('token').value = TOKEN; carregar(); }
+</script>
+</body>
+</html>

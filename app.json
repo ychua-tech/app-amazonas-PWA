@@ -1,17 +1,20 @@
 {
   "expo": {
-    "name": "amazonas-app",
+    "name": "Supermercado Amazonas",
     "slug": "amazonas-app",
+    "scheme": "amazonas",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "br.com.supermercadoamazonas.app"
     },
     "android": {
+      "package": "br.com.supermercadoamazonas.app",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#F26522",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -19,7 +22,44 @@
       "predictiveBackGestureEnabled": false
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "output": "single",
+      "lang": "pt-BR",
+      "description": "Ofertas da semana, catálogo completo e Clube Amazonas (cashback) do Supermercado Amazonas em Juína/MT. Peça pelo app e receba em casa.",
+      "themeColor": "#F26522"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "color": "#F26522"
+        }
+      ],
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "O app usa a câmera para escanear o QR Code da sua nota fiscal e somar suas compras no Clube Amazonas."
+        }
+      ],
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 260,
+          "resizeMode": "contain",
+          "backgroundColor": "#F26522",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "imageWidth": 260,
+            "resizeMode": "contain",
+            "backgroundColor": "#F26522"
+          }
+        }
+      ],
+      "expo-image",
+      "expo-secure-store"
+    ]
   }
 }
