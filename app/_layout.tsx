@@ -7,6 +7,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { registrarDispositivo } from '../src/api/devices';
 import { AvisoModal } from '../src/components/AvisoModal';
+import { InstalarAppBanner } from '../src/components/InstalarAppBanner';
 import { CarrinhoProvider } from '../src/context/CarrinhoContext';
 import { CatalogoProvider } from '../src/context/CatalogoContext';
 import { ClubeProvider, useClube } from '../src/context/ClubeContext';
@@ -77,6 +78,7 @@ function Conteudo() {
   return (
     <>
       <StatusBar style="light" />
+      <InstalarAppBanner />
       <Stack
         screenOptions={{
           headerStyle: { backgroundColor: colors.primary },
