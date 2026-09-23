@@ -43,6 +43,12 @@
   .tag{display:inline-block;background:var(--laranja-suave);color:var(--laranja-escuro);
     font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px}
   .tag.rel{background:var(--laranja-escuro);color:#fff}
+  .tag.novo{background:var(--sucesso);color:#fff}
+  #areaAdmin > .card > h2{cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px}
+  #areaAdmin > .card > h2::after{content:'▾';margin-left:auto;color:var(--muted);font-size:13px;
+    transition:transform .15s;padding-left:8px}
+  #areaAdmin > .card.recolhido > h2::after{transform:rotate(-90deg)}
+  #areaAdmin > .card.recolhido > *:not(h2){display:none!important}
   .aviso{padding:10px 12px;border-radius:9px;font-size:13px;margin-top:10px}
   .aviso.ok{background:#e5f5ec;color:var(--sucesso)}
   .aviso.err{background:#fde8e7;color:var(--perigo)}
@@ -100,13 +106,13 @@
   </div>
 
   <div id="areaAdmin" hidden>
-  <div class="card">
-    <h2>Pedidos <span id="pedidosBadge" class="tag" style="display:none"></span></h2>
+  <div class="card" id="cardPedidos">
+    <h2>Pedidos <span id="pedidosNovoBadge" class="tag novo" style="display:none"></span> <span id="pedidosBadge" class="tag" style="display:none"></span></h2>
     <small>Atualiza sozinho a cada 15s. Ao mudar o status, o cliente recebe uma notificação e acompanha no app.</small>
     <div id="pedidos" class="lista" style="margin-top:12px"><small>Entre com o token para ver.</small></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="cardPrecos">
     <h2>Preços do catálogo <span id="precosBadge" class="tag" style="display:none"></span></h2>
     <small>Mesmos preços que a área de admin do app. Edite o valor e clique em salvar — o app recebe na próxima abertura.</small>
     <div class="row" style="margin-top:12px">
@@ -130,7 +136,7 @@
     <div id="precosAviso"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="cardOferta">
     <h2 id="formTitulo">Nova oferta</h2>
     <input type="hidden" id="f_id" />
     <label>Nome do produto *</label>
@@ -172,7 +178,7 @@
     <div id="formAviso"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="cardAviso">
     <h2>Aviso de abertura do app</h2>
     <small>Aparece uma vez por dia quando o cliente abre o app. Deixe o título vazio e salve para desativar.</small>
     <label style="display:flex;align-items:center;gap:8px;margin-top:10px">
@@ -196,7 +202,7 @@
     <div id="avisoAviso"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="cardRelampago">
     <h2>Disparar oferta relâmpago (push)</h2>
     <small>Envia notificação para todos os aparelhos com o app instalado.</small>
     <label>Oferta relacionada (opcional)</label>
@@ -211,7 +217,7 @@
     <div id="pushAviso"></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="cardListaOfertas">
     <h2>Ofertas publicadas</h2>
     <div id="lista" class="lista"><small>Entre com o token para ver.</small></div>
   </div>
@@ -262,6 +268,19 @@ h('f_relampago').addEventListener('change', e=>{
   h('relampagoCampos').style.display = e.target.checked ? 'block' : 'none';
 });
 
+// ---------- Cards retráteis (clica no título pra abrir/fechar, lembra o estado) ----------
+document.querySelectorAll('#areaAdmin > .card').forEach(card=>{
+  const h2 = card.querySelector(':scope > h2');
+  if(!h2 || !card.id) return;
+  const chave = 'amz_card_recolhido_' + card.id;
+  if(localStorage.getItem(chave) === '1') card.classList.add('recolhido');
+  h2.addEventListener('click', ()=>{
+    const recolhido = card.classList.toggle('recolhido');
+    localStorage.setItem(chave, recolhido ? '1' : '0');
+    if(!recolhido && card.id === 'cardPedidos') marcarPedidosVistos(PEDIDOS);
+  });
+});
+
 async function carregar(){
   try{
     const ofertas = await req('/admin/ofertas');
@@ -306,11 +325,41 @@ function avisarWhatsApp(pedido, status){
 
 let PEDIDOS = [];
 
+// ---------- Aviso de pedido novo (bolinha verde no título do card) ----------
+// null = nunca vimos pedidos nessa versão do painel ainda (não alarma com o histórico inteiro)
+function idsPedidosVistos(){
+  const bruto = localStorage.getItem('amz_pedidos_vistos');
+  if(bruto == null) return null;
+  try{ return new Set(JSON.parse(bruto)); }catch{ return new Set(); }
+}
+function marcarPedidosVistos(pedidos){
+  localStorage.setItem('amz_pedidos_vistos', JSON.stringify(pedidos.map(p=>p.id)));
+  h('pedidosNovoBadge').style.display = 'none';
+}
+function cardPedidosAberto(){
+  return !h('cardPedidos').classList.contains('recolhido');
+}
+
 async function carregarPedidos(){
   let pedidos;
   try{ pedidos = await req('/admin/pedidos'); }
   catch{ return; }
   PEDIDOS = pedidos;
+
+  let vistos = idsPedidosVistos();
+  if(vistos === null){
+    // 1ª vez com essa versão do painel: considera os pedidos de agora como já vistos
+    marcarPedidosVistos(pedidos);
+    vistos = new Set(pedidos.map(p=>p.id));
+  }
+  if(cardPedidosAberto()){
+    marcarPedidosVistos(pedidos); // card aberto = ela tá vendo, não acumula "novo"
+  }else{
+    const novos = pedidos.filter(p=>!vistos.has(p.id));
+    const badgeNovo = h('pedidosNovoBadge');
+    if(novos.length){ badgeNovo.style.display='inline-block'; badgeNovo.textContent = '● '+novos.length+' novo(s)'; }
+    else badgeNovo.style.display='none';
+  }
 
   const abertos = pedidos.filter(p=>!['entregue','cancelado'].includes(p.status));
   const badge = h('pedidosBadge');
