@@ -627,7 +627,9 @@ async function dispararRelampago(){
   }catch(e){ aviso(h('pushAviso'), e.message, 'err'); }
 }
 
-if(TOKEN){ h('token').value = TOKEN; carregar(); }
+// preenche o campo pra não precisar colar de novo, mas NÃO entra sozinho —
+// só mostra o painel depois de clicar em "Entrar" (mesmo com token salvo).
+if(TOKEN){ h('token').value = TOKEN; }
 </script>
 </body>
 </html>
