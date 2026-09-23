@@ -45,7 +45,24 @@ export default function MercadoScreen() {
     [produtos, termo, categoria],
   );
 
-  /** Agrupa por categoria, na ordem fixa de CATEGORIAS, escondendo seções vazias. */
+  // seções abertas manualmente pelo cliente — todas começam fechadas
+  const [abertas, setAbertas] = useState<Set<Categoria>>(new Set());
+  const buscando = termo.trim().length > 0;
+
+  function alternar(cat: Categoria) {
+    setAbertas((prev) => {
+      const novo = new Set(prev);
+      if (novo.has(cat)) novo.delete(cat);
+      else novo.add(cat);
+      return novo;
+    });
+  }
+
+  /**
+   * Agrupa por categoria, na ordem fixa de CATEGORIAS, escondendo seções vazias.
+   * Uma seção só mostra os itens se o cliente abriu ela, se está buscando (senão o
+   * resultado da busca ficaria escondido) ou se o chip daquela categoria está ativo.
+   */
   const secoes = useMemo(() => {
     const porCategoria = new Map<Categoria, typeof resultados>();
     for (const item of resultados) {
@@ -53,11 +70,12 @@ export default function MercadoScreen() {
       if (lista) lista.push(item);
       else porCategoria.set(item.categoria, [item]);
     }
-    return CATEGORIAS.filter((c) => porCategoria.has(c)).map((cat) => ({
-      categoria: cat,
-      data: porCategoria.get(cat)!,
-    }));
-  }, [resultados]);
+    return CATEGORIAS.filter((c) => porCategoria.has(c)).map((cat) => {
+      const itens = porCategoria.get(cat)!;
+      const aberta = abertas.has(cat) || buscando || categoria === cat;
+      return { categoria: cat, total: itens.length, aberta, data: aberta ? itens : [] };
+    });
+  }, [resultados, abertas, buscando, categoria]);
 
   const aoAtualizar = async () => {
     setAtualizando(true);
@@ -118,11 +136,16 @@ export default function MercadoScreen() {
         keyExtractor={(p) => p.id}
         renderItem={({ item }) => <ProdutoRow item={item} />}
         renderSectionHeader={({ section }) => (
-          <View style={styles.secaoHeader}>
+          <Pressable style={styles.secaoHeader} onPress={() => alternar(section.categoria)}>
             <Ionicons name={ICONE_CAT[section.categoria]} size={15} color={colors.primary} />
             <Text style={styles.secaoTitulo}>{section.categoria}</Text>
-            <Text style={styles.secaoContagem}>{section.data.length}</Text>
-          </View>
+            <Text style={styles.secaoContagem}>{section.total}</Text>
+            <Ionicons
+              name={section.aberta ? 'chevron-up' : 'chevron-down'}
+              size={16}
+              color={colors.textMuted}
+            />
+          </Pressable>
         )}
         stickySectionHeadersEnabled
         contentContainerStyle={{

@@ -53,7 +53,7 @@ export function OfertaCard({ oferta }: { oferta: Oferta }) {
             <Text style={styles.precoOferta}>{brl(oferta.precoOferta)}</Text>
             <Text style={styles.unidade}> /{oferta.unidade}</Text>
           </View>
-          <Text style={styles.precoNormal}>de {brl(oferta.precoNormal)}</Text>
+          {desc > 0 && <Text style={styles.precoNormal}>de {brl(oferta.precoNormal)}</Text>}
 
           {oferta.precoClube != null && (
             <View style={styles.socioChip}>
@@ -62,7 +62,7 @@ export function OfertaCard({ oferta }: { oferta: Oferta }) {
             </View>
           )}
 
-          <Text style={styles.validade}>{validadeCurta(oferta.validade)}</Text>
+          {desc > 0 && <Text style={styles.validade}>{validadeCurta(oferta.validade)}</Text>}
 
           <View style={styles.acao}>
             {porPeso ? (

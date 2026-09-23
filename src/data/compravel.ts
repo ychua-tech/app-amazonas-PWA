@@ -59,6 +59,29 @@ export function ofertaParaCompravel(o: Oferta): ItemCompravel {
   };
 }
 
+/**
+ * Mostra um produto do catálogo como se fosse uma "oferta" sem desconto (precoNormal ===
+ * precoOferta) — usado na home quando não há nenhuma promoção ativa, pra tela nunca ficar vazia.
+ */
+export function produtoParaOfertaSemDesconto(p: Produto): Oferta {
+  return {
+    id: p.id,
+    nome: p.nome,
+    descricao: p.descricao ?? '',
+    categoria: p.categoria,
+    precoNormal: p.preco,
+    precoOferta: p.preco,
+    precoClube: p.precoClube,
+    unidade: p.unidade,
+    imagem: p.imagem,
+    validade: '2099-12-31T23:59:59.999Z', // sem promoção — não expira
+    relampago: false,
+    modoVenda: p.modoVenda,
+    pesosSugeridos: p.pesosSugeridos,
+    pesoMedioUn: p.pesoMedioUn,
+  };
+}
+
 export function produtoParaCompravel(p: Produto): ItemCompravel {
   const modo = p.modoVenda ?? modoVendaPadrao(p.categoria, p.unidade);
   return {

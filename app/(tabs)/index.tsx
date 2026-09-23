@@ -16,6 +16,8 @@ import { Estado } from '../../src/components/Estado';
 import { OfertaCard } from '../../src/components/OfertaCard';
 import { OfertaCardSkeleton } from '../../src/components/Skeleton';
 import { expirou } from '../../src/api/ofertas';
+import { useCatalogo } from '../../src/context/CatalogoContext';
+import { produtoParaOfertaSemDesconto } from '../../src/data/compravel';
 import type { Categoria } from '../../src/data/types';
 import { useOfertas } from '../../src/hooks/useOfertas';
 import { colors, font, gradiente, radius, shadow, spacing } from '../../src/theme';
@@ -36,12 +38,19 @@ const CATEGORIAS: (Categoria | 'Todas')[] = [
 export default function OfertasScreen() {
   const insets = useSafeAreaInsets();
   const { ofertas, carregando, atualizando, erro, refresh } = useOfertas();
+  const { produtos: catalogo } = useCatalogo();
   const [filtro, setFiltro] = useState<Categoria | 'Todas'>('Todas');
 
   const ativas = useMemo(() => ofertas.filter((o) => !expirou(o)), [ofertas]);
+  // sem nenhuma promoção rolando: mostra o catálogo (preço normal) pra home nunca ficar vazia
+  const semPromocaoAtiva = ativas.length === 0;
+  const base = useMemo(
+    () => (semPromocaoAtiva ? catalogo.map(produtoParaOfertaSemDesconto) : ativas),
+    [semPromocaoAtiva, catalogo, ativas],
+  );
   const lista = useMemo(
-    () => (filtro === 'Todas' ? ativas : ativas.filter((o) => o.categoria === filtro)),
-    [ativas, filtro],
+    () => (filtro === 'Todas' ? base : base.filter((o) => o.categoria === filtro)),
+    [base, filtro],
   );
   const relampago = useMemo(() => ativas.filter((o) => o.relampago), [ativas]);
 
@@ -148,8 +157,15 @@ export default function OfertasScreen() {
               <View style={[styles.tituloIcone, { backgroundColor: colors.primarySoft }]}>
                 <Ionicons name="pricetags" size={15} color={colors.primary} />
               </View>
-              <Text style={styles.titulo}>Ofertas da semana</Text>
+              <Text style={styles.titulo}>
+                {semPromocaoAtiva ? 'Nosso catálogo' : 'Ofertas da semana'}
+              </Text>
             </View>
+            {semPromocaoAtiva && (
+              <Text style={styles.subtitulo}>
+                Sem promoções ativas no momento — mas dá pra pedir tudo por aqui.
+              </Text>
+            )}
 
             <ScrollView
               horizontal
@@ -197,6 +213,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   titulo: { fontSize: font.sizeLg, fontWeight: font.weightBold, color: colors.text },
+  subtitulo: { fontSize: font.sizeXs, color: colors.textMuted, marginTop: -spacing.xs },
   relampagoItem: { width: 200 },
   catChip: {
     paddingHorizontal: spacing.lg,
