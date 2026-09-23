@@ -9,5 +9,4 @@ services:
     envVars:
       # preenchido na mão no dashboard do Render na 1ª vez (nunca fica neste arquivo)
       - key: ADMIN_TOKEN
-        value:
         sync: false
