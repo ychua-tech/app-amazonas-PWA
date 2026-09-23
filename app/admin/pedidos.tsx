@@ -22,6 +22,7 @@ import { Estado } from '../../src/components/Estado';
 import { useAdmin } from '../../src/context/AdminContext';
 import { formatarPeso } from '../../src/data/compravel';
 import { brl, tempoAtras } from '../../src/lib/format';
+import { avisarStatusWhatsApp } from '../../src/lib/pedido';
 import { colors, font, radius, spacing } from '../../src/theme';
 
 const CorStatus: Record<StatusPedido, string> = {
@@ -76,6 +77,8 @@ export default function AdminPedidos() {
         body: JSON.stringify({ status, motivo }),
       });
       carregar('refresh');
+      // abre o WhatsApp do cliente com o aviso já escrito — a dona só confere e aperta enviar
+      await avisarStatusWhatsApp(p, status);
     } catch (e) {
       Alert.alert('Erro', e instanceof ApiError ? e.message : 'Não foi possível mudar o status.');
     }

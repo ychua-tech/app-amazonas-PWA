@@ -74,6 +74,9 @@
   .preco-item .campo span{font-size:11px;color:var(--muted);font-weight:700}
   .preco-item .campo input{width:64px;border:0;padding:2px 0;font-weight:700;text-align:right}
   .preco-item .campo input:focus{outline:0}
+  .preco-item{flex-wrap:wrap}
+  .preco-item .acoes{display:flex;gap:6px}
+  .preco-item .acoes button{padding:8px 10px;line-height:1}
 </style>
 </head>
 <body>
@@ -90,11 +93,13 @@
         <input id="token" type="password" placeholder="cole o token aqui" />
       </div>
       <button onclick="salvarToken()">Entrar</button>
+      <button id="btnSair" class="sec" onclick="sair()" style="display:none">Sair</button>
     </div>
     <small>Definido no servidor pela variável <code>ADMIN_TOKEN</code>.</small>
     <div id="tokenAviso"></div>
   </div>
 
+  <div id="areaAdmin" hidden>
   <div class="card">
     <h2>Pedidos <span id="pedidosBadge" class="tag" style="display:none"></span></h2>
     <small>Atualiza sozinho a cada 15s. Ao mudar o status, o cliente recebe uma notificação e acompanha no app.</small>
@@ -210,6 +215,7 @@
     <h2>Ofertas publicadas</h2>
     <div id="lista" class="lista"><small>Entre com o token para ver.</small></div>
   </div>
+  </div>
 </main>
 
 <script>
@@ -238,6 +244,20 @@ function salvarToken(){
   carregar();
 }
 
+function mostrarArea(mostrar){
+  h('areaAdmin').hidden = !mostrar;
+  h('btnSair').style.display = mostrar ? 'inline-block' : 'none';
+}
+
+function sair(){
+  TOKEN = '';
+  localStorage.removeItem('amz_admin_token');
+  h('token').value = '';
+  mostrarArea(false);
+  if(window._pedidosTimer){ clearInterval(window._pedidosTimer); window._pedidosTimer = null; }
+  aviso(h('tokenAviso'), 'Você saiu.', 'ok');
+}
+
 h('f_relampago').addEventListener('change', e=>{
   h('relampagoCampos').style.display = e.target.checked ? 'block' : 'none';
 });
@@ -245,6 +265,7 @@ h('f_relampago').addEventListener('change', e=>{
 async function carregar(){
   try{
     const ofertas = await req('/admin/ofertas');
+    mostrarArea(true);
     aviso(h('tokenAviso'), 'Token ok — '+ofertas.length+' oferta(s).', 'ok');
     renderLista(ofertas);
     const sel = h('r_ofertaId');
@@ -255,8 +276,8 @@ async function carregar(){
     carregarPrecos();
     if(!window._pedidosTimer) window._pedidosTimer = setInterval(carregarPedidos, 15000);
   }catch(e){
+    mostrarArea(false);
     aviso(h('tokenAviso'), e.message, 'err');
-    h('lista').innerHTML = '<small>Token inválido ou servidor fora do ar.</small>';
   }
 }
 
@@ -266,10 +287,30 @@ const ROTULO_STATUS = {
   saiu_entrega:'Saiu p/ entrega', entregue:'Entregue', cancelado:'Cancelado'
 };
 
+// texto pra avisar o cliente no WhatsApp quando o status muda
+const MENSAGENS_STATUS = {
+  aceito: p => `Oi, ${p.cliente.nome}! Seu pedido *${p.codigo}* do Supermercado Amazonas foi confirmado ✅ Já começamos a separar.`,
+  separando: p => `Seu pedido *${p.codigo}* está sendo separado agora 🛒`,
+  saiu_entrega: p => `Seu pedido *${p.codigo}* saiu para entrega 🛵 Já já chega aí!`,
+  entregue: p => `Seu pedido *${p.codigo}* foi entregue 🎉 Obrigado por comprar no Supermercado Amazonas!`,
+  cancelado: p => `Seu pedido *${p.codigo}* foi cancelado. Qualquer dúvida, é só chamar por aqui.`,
+};
+// abre o WhatsApp do cliente com o aviso já escrito (não faz nada sem telefone/sem mensagem pro status)
+function avisarWhatsApp(pedido, status){
+  const telefone = pedido?.cliente?.telefone;
+  const mensagem = MENSAGENS_STATUS[status]?.(pedido);
+  if(!telefone || !mensagem) return;
+  const numero = telefone.replace(/\D/g,'');
+  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(mensagem)}`, '_blank');
+}
+
+let PEDIDOS = [];
+
 async function carregarPedidos(){
   let pedidos;
   try{ pedidos = await req('/admin/pedidos'); }
   catch{ return; }
+  PEDIDOS = pedidos;
 
   const abertos = pedidos.filter(p=>!['entregue','cancelado'].includes(p.status));
   const badge = h('pedidosBadge');
@@ -304,16 +345,20 @@ async function carregarPedidos(){
 }
 
 async function mudarStatus(id, status){
+  const pedido = PEDIDOS.find(p=>p.id===id);
   try{
     await req('/admin/pedidos/'+id+'/status', { method:'POST', body: JSON.stringify({ status }) });
     carregarPedidos();
+    if(pedido) avisarWhatsApp(pedido, status);
   }catch(e){ alert(e.message); }
 }
 async function cancelarPedido(id){
   const motivo = prompt('Motivo do cancelamento (opcional):') ?? '';
+  const pedido = PEDIDOS.find(p=>p.id===id);
   try{
     await req('/admin/pedidos/'+id+'/status', { method:'POST', body: JSON.stringify({ status:'cancelado', motivo }) });
     carregarPedidos();
+    if(pedido) avisarWhatsApp(pedido, 'cancelado');
   }catch(e){ alert(e.message); }
 }
 
@@ -364,6 +409,10 @@ function renderPrecos(){
       </div>
       <div class="campo"><span>R$</span><input inputmode="decimal" data-id="${p.id}" data-campo="preco" value="${preco}" /></div>
       <div class="campo socio"><span>♥</span><input inputmode="decimal" data-id="${p.id}" data-campo="precoClube" placeholder="sócio" value="${clube}" /></div>
+      <div class="acoes">
+        <button class="mini sec" title="Criar promoção com este produto" onclick="criarOfertaDoProduto('${p.id}')">⚡</button>
+        <button class="mini perigo" title="Excluir produto do catálogo" onclick="excluirProduto('${p.id}')">🗑️</button>
+      </div>
     </div>`;
   }).join('');
   h('precosLista').querySelectorAll('input[data-campo]').forEach(inp=>{
@@ -428,6 +477,34 @@ async function salvarPrecos(){
 
 h('p_busca').addEventListener('input', renderPrecos);
 h('p_categoria').addEventListener('change', renderPrecos);
+
+/** Exclui o produto do catálogo do mercado (não afeta ofertas já publicadas). */
+async function excluirProduto(id){
+  const p = PRODUTOS.find(x=>x.id===id);
+  const nome = p ? p.nome : 'este produto';
+  if(!confirm(`Excluir "${nome}" do catálogo? Isso não pode ser desfeito.`)) return;
+  try{
+    await req('/admin/produtos/'+id, { method:'DELETE' });
+    delete EDICOES[id];
+    await carregarPrecos();
+  }catch(e){ alert(e.message); }
+}
+
+/** Pré-preenche o formulário de oferta com os dados desse produto — só ajustar o preço promocional. */
+function criarOfertaDoProduto(id){
+  const p = PRODUTOS.find(x=>x.id===id);
+  if(!p) return;
+  limparForm();
+  h('f_nome').value = p.nome + (p.marca ? ' ' + p.marca : '');
+  h('f_categoria').value = p.categoria;
+  h('f_unidade').value = p.unidade || '';
+  h('f_precoNormal').value = p.preco ?? '';
+  h('f_precoOferta').value = '';
+  h('f_precoClube').value = p.precoClube ?? '';
+  h('f_imagem').value = typeof p.imagem === 'string' ? p.imagem : '';
+  window.scrollTo({ top: h('formTitulo').getBoundingClientRect().top + window.scrollY - 12, behavior:'smooth' });
+  h('f_precoOferta').focus();
+}
 
 async function carregarAviso(){
   try{

@@ -1,3 +1,4 @@
+import type { Pedido, StatusPedido } from '../api/pedidos';
 import { totalDaLinha, type ItemCarrinho } from '../context/CarrinhoContext';
 import { formatarPeso } from '../data/compravel';
 import { formasPagamentoPedido, loja, type FormaPagamentoPedido } from '../data/loja';
@@ -83,4 +84,27 @@ export async function enviarPedidoWhatsApp(
   codigo?: string,
 ) {
   await abrirWhatsApp(loja.whatsappPedidos, montarMensagemPedido(itens, dados, codigo));
+}
+
+/** Texto pra avisar o cliente no WhatsApp quando o status do pedido muda. */
+const MENSAGENS_STATUS: Partial<Record<StatusPedido, (p: Pedido) => string>> = {
+  aceito: (p) =>
+    `Oi, ${p.cliente.nome}! Seu pedido *${p.codigo}* do ${loja.nome} foi confirmado ✅ Já começamos a separar.`,
+  separando: (p) => `Seu pedido *${p.codigo}* está sendo separado agora 🛒`,
+  saiu_entrega: (p) => `Seu pedido *${p.codigo}* saiu para entrega 🛵 Já já chega aí!`,
+  entregue: (p) => `Seu pedido *${p.codigo}* foi entregue 🎉 Obrigado por comprar no ${loja.nome}!`,
+  cancelado: (p) => `Seu pedido *${p.codigo}* foi cancelado. Qualquer dúvida, é só chamar por aqui.`,
+};
+
+/**
+ * Abre o WhatsApp do cliente (com a mensagem do novo status já escrita) pra dona só apertar enviar.
+ * Não faz nada se o cliente não deixou telefone, ou se o status não tem aviso (ex.: "aguardando").
+ * Retorna `true` se abriu o WhatsApp.
+ */
+export async function avisarStatusWhatsApp(pedido: Pedido, status: StatusPedido): Promise<boolean> {
+  const telefone = pedido.cliente.telefone;
+  const mensagem = MENSAGENS_STATUS[status]?.(pedido);
+  if (!telefone || !mensagem) return false;
+  await abrirWhatsApp(telefone, mensagem);
+  return true;
 }
