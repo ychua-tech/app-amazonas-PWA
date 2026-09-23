@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import {
-  FlatList,
   Pressable,
   RefreshControl,
   ScrollView,
+  SectionList,
   StyleSheet,
   Text,
   TextInput,
@@ -44,6 +44,20 @@ export default function MercadoScreen() {
     () => buscarProdutos(produtos, termo, categoria).map(produtoParaCompravel),
     [produtos, termo, categoria],
   );
+
+  /** Agrupa por categoria, na ordem fixa de CATEGORIAS, escondendo seções vazias. */
+  const secoes = useMemo(() => {
+    const porCategoria = new Map<Categoria, typeof resultados>();
+    for (const item of resultados) {
+      const lista = porCategoria.get(item.categoria);
+      if (lista) lista.push(item);
+      else porCategoria.set(item.categoria, [item]);
+    }
+    return CATEGORIAS.filter((c) => porCategoria.has(c)).map((cat) => ({
+      categoria: cat,
+      data: porCategoria.get(cat)!,
+    }));
+  }, [resultados]);
 
   const aoAtualizar = async () => {
     setAtualizando(true);
@@ -99,10 +113,18 @@ export default function MercadoScreen() {
         })}
       </ScrollView>
 
-      <FlatList
-        data={resultados}
+      <SectionList
+        sections={secoes}
         keyExtractor={(p) => p.id}
         renderItem={({ item }) => <ProdutoRow item={item} />}
+        renderSectionHeader={({ section }) => (
+          <View style={styles.secaoHeader}>
+            <Ionicons name={ICONE_CAT[section.categoria]} size={15} color={colors.primary} />
+            <Text style={styles.secaoTitulo}>{section.categoria}</Text>
+            <Text style={styles.secaoContagem}>{section.data.length}</Text>
+          </View>
+        )}
+        stickySectionHeadersEnabled
         contentContainerStyle={{
           padding: spacing.lg,
           paddingTop: spacing.sm,
@@ -169,4 +191,13 @@ const styles = StyleSheet.create({
   chipTexto: { fontSize: font.sizeXs, color: colors.textMuted, fontWeight: font.weightMedium },
   chipTextoAtivo: { color: colors.onPrimary, fontWeight: font.weightBold },
   contador: { fontSize: font.sizeXs, color: colors.textMuted, marginBottom: spacing.xs },
+  secaoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+    backgroundColor: colors.background,
+    paddingVertical: spacing.sm,
+  },
+  secaoTitulo: { fontSize: font.sizeSm, fontWeight: font.weightBold, color: colors.text, flex: 1 },
+  secaoContagem: { fontSize: font.sizeXs, color: colors.textSubtle },
 });
