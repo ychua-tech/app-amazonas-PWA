@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_ATIVA } from './config';
 import { apiFetch } from './http';
 import { getPushTokenSalvo } from '../lib/notifications';
+import { taxaDeEntrega, totalDoPedido } from '../lib/valores';
 
 export type StatusPedido =
   | 'aguardando'
@@ -38,6 +39,15 @@ export interface ItemPedido {
   pesoKg?: number;
 }
 
+/** Dados pra pagar por Pix — o servidor só manda quando o pedido é Pix. */
+export interface PixInfo {
+  tipoChave: string; // "CNPJ", "Celular"...
+  chave: string; // como deve ser copiada (só dígitos no CNPJ)
+  chaveFormatada: string; // como aparece na tela
+  favorecido: string;
+  valor: number;
+}
+
 export interface Pedido {
   id: string;
   codigo: string;
@@ -52,13 +62,21 @@ export interface Pedido {
     referencia?: string;
   };
   pagamento?: string | null;
+  /** id da forma de pagamento escolhida: "pix" | "dinheiro" | "cartao" */
+  pagamentoId?: string | null;
   trocoPara?: string | null;
   observacao?: string | null;
   itens: ItemPedido[];
   subtotal: number;
+  /** taxa de entrega cobrada (0 = grátis). Pedidos antigos não têm o campo. */
+  taxaEntrega?: number;
   cashbackUsado?: number;
-  /** subtotal - cashbackUsado (sem taxa de entrega) */
+  /** bônus de aniversário aplicado (R$) */
+  bonusAniversario?: number;
+  /** subtotal + taxa de entrega − cashback − bônus de aniversário */
   total?: number;
+  /** só em pedido Pix: chave e valor pra pagar depois que a loja confirmar */
+  pix?: PixInfo;
   canceladoMotivo?: string;
   /** true quando é um pedido local (sem servidor) */
   demo?: boolean;
@@ -67,11 +85,14 @@ export interface Pedido {
 export interface NovoPedido {
   cliente: Pedido['cliente'];
   pagamento?: string;
+  pagamentoId?: string;
   trocoPara?: string;
   observacao?: string;
   itens: ItemPedido[];
   subtotal: number;
+  taxaEntrega?: number;
   cashbackUsado?: number;
+  bonusAniversario?: number;
 }
 
 export interface PedidoResumo {
@@ -108,12 +129,20 @@ export async function criarPedido(dados: NovoPedido): Promise<PedidoResumo> {
     historico: [{ status: 'aguardando', em: agora }],
     cliente: dados.cliente,
     pagamento: dados.pagamento ?? null,
+    pagamentoId: dados.pagamentoId ?? null,
     trocoPara: dados.trocoPara ?? null,
     observacao: dados.observacao ?? null,
     itens: dados.itens,
     subtotal: dados.subtotal,
+    taxaEntrega: dados.taxaEntrega ?? taxaDeEntrega(dados.subtotal),
     cashbackUsado: dados.cashbackUsado,
-    total: Math.round((dados.subtotal - (dados.cashbackUsado ?? 0)) * 100) / 100,
+    bonusAniversario: dados.bonusAniversario,
+    total: totalDoPedido({
+      subtotal: dados.subtotal,
+      cashback: dados.cashbackUsado,
+      bonus: dados.bonusAniversario,
+      taxaEntrega: dados.taxaEntrega ?? taxaDeEntrega(dados.subtotal),
+    }),
     demo: true,
   };
   await AsyncStorage.setItem(chaveLocal(pedido.id), JSON.stringify(pedido));

@@ -8,7 +8,6 @@ import { SeletorCompra } from '../../src/components/SeletorCompra';
 import { Skeleton } from '../../src/components/Skeleton';
 import { Botao, Chip } from '../../src/components/ui';
 import { useCarrinho } from '../../src/context/CarrinhoContext';
-import { useClube } from '../../src/context/ClubeContext';
 import { formatarPeso, ofertaParaCompravel } from '../../src/data/compravel';
 import { useContagemRegressiva } from '../../src/hooks/useContagemRegressiva';
 import { useOferta } from '../../src/hooks/useOfertas';
@@ -19,7 +18,6 @@ export default function OfertaDetalhe() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { socio } = useClube();
   const { oferta, carregando } = useOferta(id);
   const { restanteMs, encerrada } = useContagemRegressiva(oferta?.relampagoFim);
   const { itens, adicionar, totalLinha, totalItens } = useCarrinho();
@@ -47,7 +45,6 @@ export default function OfertaDetalhe() {
 
   const item = ofertaParaCompravel(oferta);
   const desc = descontoPercent(oferta.precoNormal, oferta.precoOferta);
-  const temPrecoClube = oferta.precoClube != null;
   const linhas = itens.filter((l) => l.produtoId === oferta.id);
 
   return (
@@ -85,16 +82,6 @@ export default function OfertaDetalhe() {
             </View>
             <Text style={styles.precoNormal}>de {brl(oferta.precoNormal)}</Text>
 
-            {temPrecoClube && (
-              <View style={styles.clubeBox}>
-                <Ionicons name="heart" size={14} color={colors.primary} />
-                <Text style={styles.clubeTexto}>
-                  {socio
-                    ? `Preço de sócio: ${brl(oferta.precoClube!)}`
-                    : `Sócio Clube Amazonas paga ${brl(oferta.precoClube!)}`}
-                </Text>
-              </View>
-            )}
           </View>
 
           <Text style={styles.validade}>
@@ -165,16 +152,6 @@ const styles = StyleSheet.create({
   precoAtual: { fontSize: font.size2xl, fontWeight: font.weightBold, color: colors.primary },
   unidade: { fontSize: font.sizeSm, color: colors.textMuted },
   precoNormal: { fontSize: font.sizeXs, color: colors.textSubtle, textDecorationLine: 'line-through' },
-  clubeBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    marginTop: spacing.sm,
-    backgroundColor: colors.primarySoft,
-    padding: spacing.sm,
-    borderRadius: radius.sm,
-  },
-  clubeTexto: { flex: 1, fontSize: font.sizeXs, color: colors.primaryDark, fontWeight: font.weightMedium },
   validade: { fontSize: font.sizeXs, color: colors.textSubtle, marginTop: spacing.sm },
   divisor: { height: 1, backgroundColor: colors.border, marginVertical: spacing.lg },
   jaBox: {

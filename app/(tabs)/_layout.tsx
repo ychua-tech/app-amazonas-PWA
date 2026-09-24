@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Link, Tabs, useRouter } from 'expo-router';
+import { Link, Tabs } from 'expo-router';
 import { Pressable, Text } from 'react-native';
 import { Logo } from '../../src/components/Logo';
 import { useCarrinho } from '../../src/context/CarrinhoContext';
@@ -7,7 +7,6 @@ import { colors } from '../../src/theme';
 
 export default function TabsLayout() {
   const { totalItens } = useCarrinho();
-  const router = useRouter();
 
   return (
     <Tabs
@@ -30,15 +29,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          headerTitle: () => (
-            <Pressable
-              onLongPress={() => router.push('/admin')}
-              delayLongPress={800}
-              // acesso discreto à administração (pede token)
-            >
-              <Logo altura={38} />
-            </Pressable>
-          ),
+          headerTitle: () => <Logo altura={38} />,
           headerTitleAlign: 'center',
           tabBarLabel: 'Ofertas',
           tabBarIcon: ({ color, size }) => (

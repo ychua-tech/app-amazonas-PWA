@@ -29,7 +29,7 @@ function paraNumero(txt: string): number | null {
 }
 const money = (n?: number) => (n == null ? '' : String(n).replace('.', ','));
 
-type Edicao = { preco?: string; precoClube?: string };
+type Edicao = { preco?: string };
 
 export default function AdminPrecos() {
   const insets = useSafeAreaInsets();
@@ -69,23 +69,15 @@ export default function AdminPrecos() {
   );
 
   const pendentes = useMemo(() => {
-    const out: { id: string; preco?: number; precoClube?: number | null }[] = [];
+    const out: { id: string; preco?: number }[] = [];
     for (const p of lista) {
       const e = edicoes[p.id];
       if (!e) continue;
-      const linha: { id: string; preco?: number; precoClube?: number | null } = { id: p.id };
+      const linha: { id: string; preco?: number } = { id: p.id };
       let mudou = false;
       if (e.preco !== undefined) {
         const n = paraNumero(e.preco);
         if (n != null && n !== p.preco) { linha.preco = n; mudou = true; }
-      }
-      if (e.precoClube !== undefined) {
-        const txt = e.precoClube.trim();
-        if (txt === '' && p.precoClube != null) { linha.precoClube = null; mudou = true; }
-        else if (txt !== '') {
-          const n = paraNumero(txt);
-          if (n != null && n !== p.precoClube) { linha.precoClube = n; mudou = true; }
-        }
       }
       if (mudou) out.push(linha);
     }
@@ -116,8 +108,6 @@ export default function AdminPrecos() {
             novo.preco = alt.preco;
             novo.atualizadoEm = new Date().toISOString();
           }
-          if (alt.precoClube === null) delete novo.precoClube;
-          else if (alt.precoClube != null) novo.precoClube = alt.precoClube;
           return novo;
         }),
       );
@@ -209,7 +199,6 @@ export default function AdminPrecos() {
         renderItem={({ item }) => {
           const e = edicoes[item.id] ?? {};
           const precoTxt = e.preco ?? money(item.preco);
-          const clubeTxt = e.precoClube ?? money(item.precoClube);
           const alterado = pendentes.some((x) => x.id === item.id);
           return (
             <View style={[styles.row, alterado && styles.rowAlterado]}>
@@ -231,18 +220,6 @@ export default function AdminPrecos() {
                     value={precoTxt}
                     onChangeText={(t) => setEdicao(item.id, 'preco', t)}
                     keyboardType="decimal-pad"
-                    style={styles.input}
-                    selectTextOnFocus
-                  />
-                </View>
-                <View style={[styles.campoBox, styles.campoClube]}>
-                  <Ionicons name="heart" size={11} color={colors.primary} />
-                  <TextInput
-                    value={clubeTxt}
-                    onChangeText={(t) => setEdicao(item.id, 'precoClube', t)}
-                    keyboardType="decimal-pad"
-                    placeholder="sócio"
-                    placeholderTextColor={colors.textSubtle}
                     style={styles.input}
                     selectTextOnFocus
                   />

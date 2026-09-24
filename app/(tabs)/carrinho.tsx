@@ -8,7 +8,9 @@ import { Stepper } from '../../src/components/Stepper';
 import { Botao } from '../../src/components/ui';
 import { useCarrinho } from '../../src/context/CarrinhoContext';
 import { formatarPeso } from '../../src/data/compravel';
+import { loja } from '../../src/data/loja';
 import { brl } from '../../src/lib/format';
+import { faltaParaEntregaGratis, taxaDeEntrega } from '../../src/lib/valores';
 import { colors, font, gradiente, radius, shadow, spacing } from '../../src/theme';
 
 const PASSOS = [
@@ -22,6 +24,7 @@ export default function CarrinhoScreen() {
   const router = useRouter();
   const { itens, subtotal, totalItens, totalLinha, definirQuantidade, remover } =
     useCarrinho();
+  const taxa = taxaDeEntrega(subtotal);
 
   if (itens.length === 0) {
     return (
@@ -62,7 +65,9 @@ export default function CarrinhoScreen() {
             />
 
             <Text style={styles.obs}>
-              Pagamento na entrega: Pix, dinheiro ou cartão na maquininha.
+              Entrega grátis a partir de {brl(loja.entregaGratisAPartirDe)} (abaixo disso,{' '}
+              {brl(loja.taxaEntrega)}). Pague no Pix ao confirmarmos o pedido, ou em dinheiro/cartão
+              na entrega.
             </Text>
           </View>
         }
@@ -77,7 +82,7 @@ export default function CarrinhoScreen() {
         keyExtractor={(i) => i.linhaId}
         contentContainerStyle={{
           padding: spacing.lg,
-          paddingBottom: 190,
+          paddingBottom: 240,
           gap: spacing.sm,
         }}
         ListHeaderComponent={
@@ -127,7 +132,7 @@ export default function CarrinhoScreen() {
         ListFooterComponent={
           <Text style={styles.rodapeObs}>
             Itens por peso têm valor estimado — o total é ajustado pelo peso real
-            na separação. Taxa de entrega combinada no WhatsApp.
+            na separação.
           </Text>
         }
       />
@@ -137,6 +142,18 @@ export default function CarrinhoScreen() {
           <Text style={styles.barraLabel}>Subtotal estimado</Text>
           <Text style={styles.barraValor}>{brl(subtotal)}</Text>
         </View>
+        <View style={styles.barraLinha}>
+          <Text style={styles.barraLabel}>Entrega</Text>
+          <Text style={[styles.barraEntrega, taxa === 0 && { color: colors.success }]}>
+            {taxa === 0 ? 'Grátis' : brl(taxa)}
+          </Text>
+        </View>
+        {taxa > 0 && (
+          <Text style={styles.barraDica}>
+            Faltam {brl(faltaParaEntregaGratis(subtotal))} para entrega grátis (a partir de{' '}
+            {brl(loja.entregaGratisAPartirDe)}).
+          </Text>
+        )}
         <Botao
           titulo="Finalizar pedido"
           onPress={() => router.push('/checkout')}
@@ -235,4 +252,6 @@ const styles = StyleSheet.create({
   barraLinha: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline' },
   barraLabel: { fontSize: font.sizeSm, color: colors.textMuted },
   barraValor: { fontSize: font.sizeLg, fontWeight: font.weightBold, color: colors.text },
+  barraEntrega: { fontSize: font.sizeSm, fontWeight: font.weightBold, color: colors.text },
+  barraDica: { fontSize: font.sizeXs, color: colors.textSubtle, marginTop: -4 },
 });

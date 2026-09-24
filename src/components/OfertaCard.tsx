@@ -55,13 +55,6 @@ export function OfertaCard({ oferta }: { oferta: Oferta }) {
           </View>
           {desc > 0 && <Text style={styles.precoNormal}>de {brl(oferta.precoNormal)}</Text>}
 
-          {oferta.precoClube != null && (
-            <View style={styles.socioChip}>
-              <Ionicons name="heart" size={11} color={colors.primaryDark} />
-              <Text style={styles.socioTexto}>Sócio {brl(oferta.precoClube)}</Text>
-            </View>
-          )}
-
           {desc > 0 && <Text style={styles.validade}>{validadeCurta(oferta.validade)}</Text>}
 
           <View style={styles.acao}>
@@ -177,18 +170,6 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through',
     marginTop: 1,
   },
-  socioChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    alignSelf: 'flex-start',
-    backgroundColor: colors.accentSoft,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: 3,
-    borderRadius: radius.pill,
-    marginTop: spacing.sm,
-  },
-  socioTexto: { color: colors.primaryDark, fontSize: 11, fontWeight: font.weightBold },
   validade: {
     color: colors.textSubtle,
     fontSize: font.sizeXs,

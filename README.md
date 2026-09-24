@@ -45,7 +45,11 @@ gradiente da marca) + **extrato** de todas as movimentações (bônus, notas, us
 O sócio escaneia o **QR Code da NFC-e** ([app/nota-scanner.tsx](app/nota-scanner.tsx));
 [src/lib/nfe.ts](src/lib/nfe.ts) lê a chave de 44 dígitos e o valor `vNF` (só em nota
 offline), evita duplicar e credita **`loja.cashbackPercentual`%** de cashback.
-Cadastro dá **R$ 25 de bônus de boas-vindas**.
+Não há bônus de boas-vindas nem preço de sócio. O único bônus é o de **aniversário**:
+**R$ 10** de desconto em compras a partir de **R$ 200**, só no dia do aniversário do sócio
+(dia/mês informado uma única vez, no cadastro ou na área do sócio) e 1 vez por ano — regra em
+`loja.bonusAniversario` ([src/data/loja.ts](src/data/loja.ts)); a validação do dia é local
+(o Clube ainda não tem backend), então a loja confere na entrega.
 
 **Usar o cashback:** no [checkout](app/checkout.tsx), a seção "Cashback do Clube"
 tem um switch que abate `min(saldo, subtotal)` do total. O uso vira um movimento
@@ -114,13 +118,25 @@ embarcado**, igual às ofertas. Os preços são ajustados durante a semana pela
 **área de admin dentro do app** (`GET /produtos`, `POST /admin/produtos/precos`) —
 sem precisar de nova versão.
 
+### Entrega e pagamento
+
+- **Entrega grátis a partir de R$ 100** em itens; abaixo disso, **taxa de R$ 10**
+  (`loja.entregaGratisAPartirDe` / `loja.taxaEntrega` em [src/data/loja.ts](src/data/loja.ts),
+  espelhado em `LOJA` no [server/index.js](server/index.js) — o servidor recalcula a taxa, não
+  confia no app). Cálculos em [src/lib/valores.ts](src/lib/valores.ts).
+  Total = itens + taxa − cashback − bônus de aniversário.
+- **Pix:** o cliente escolhe Pix no checkout, mas só paga **depois que a loja confirma** o
+  pedido. Ao confirmar (`aceito`) o servidor manda push pedindo o Pix, o app mostra o cartão
+  "Faça o Pix" (chave, valor, copiar, enviar comprovante no WhatsApp) e o painel abre o
+  WhatsApp do cliente já com a chave e o pedido de comprovante. Chave em `LOJA.pix` no servidor
+  (CNPJ da loja; troque por `PIX_CHAVE`/`PIX_TIPO` no ambiente).
+
 ### Área de admin (só a dona)
 
-Pressão longa (~800ms) no logo da aba **Ofertas** abre `/admin`. Login com o
-`ADMIN_TOKEN` do servidor + PIN opcional de 4 dígitos (guardados no
-`expo-secure-store`). De lá dá para editar **preços do catálogo**, **ofertas da
-semana**, o **aviso de abertura** e acompanhar **pedidos** — o mesmo que o painel
-web ([server/public/admin.html](server/public/admin.html)), mas pelo celular.
+A administração é o **painel web** ([server/public/admin.html](server/public/admin.html), na raiz
+do servidor): preços do catálogo, ofertas, aviso de abertura, relâmpago e pedidos. O acesso
+escondido pela logo do app foi removido. As telas de admin dentro do app (`app/admin/`, login
+com `ADMIN_TOKEN` + PIN) continuam no código, mas sem nenhum atalho.
 
 ### Venda por peso
 

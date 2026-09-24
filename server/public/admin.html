@@ -288,7 +288,14 @@ const ROTULO_STATUS = {
 
 // texto pra avisar o cliente no WhatsApp quando o status muda
 const MENSAGENS_STATUS = {
-  aceito: p => `Oi, ${p.cliente.nome}! Seu pedido *${p.codigo}* do Supermercado Amazonas foi confirmado ✅ Já começamos a separar.`,
+  aceito: p => p.pix
+    ? `Oi, ${p.cliente.nome}! Seu pedido *${p.codigo}* do Supermercado Amazonas foi confirmado ✅\n\n` +
+      `Pra gente começar a separar, faça o Pix agora:\n` +
+      `💠 Valor: *${brl(p.pix.valor)}*\n` +
+      `🔑 Chave Pix (${p.pix.tipoChave}): *${p.pix.chaveFormatada}*\n` +
+      `🏪 Favorecido: ${p.pix.favorecido}\n\n` +
+      `Depois é só enviar o *comprovante* aqui no WhatsApp. Obrigado! 🙏`
+    : `Oi, ${p.cliente.nome}! Seu pedido *${p.codigo}* do Supermercado Amazonas foi confirmado ✅ Já começamos a separar.`,
   separando: p => `Seu pedido *${p.codigo}* está sendo separado agora 🛒`,
   saiu_entrega: p => `Seu pedido *${p.codigo}* saiu para entrega 🛵 Já já chega aí!`,
   entregue: p => `Seu pedido *${p.codigo}* foi entregue 🎉 Obrigado por comprar no Supermercado Amazonas!`,
@@ -355,14 +362,18 @@ async function carregarPedidos(){
     const itens = p.itens.map(i=> i.modo==='peso'
       ? `${esc(i.nome)} (${i.quantidade>1?esc(i.quantidade)+'x ':''}≈${fmtPeso(i.pesoKg||0)})`
       : `${esc(i.quantidade)}x ${esc(i.nome)}`).join(', ');
+    const partes = [`Itens ${brl(p.subtotal)}`];
+    if(p.taxaEntrega !== undefined) partes.push(p.taxaEntrega > 0 ? `Entrega ${brl(p.taxaEntrega)}` : 'Entrega grátis');
+    if(p.cashbackUsado > 0) partes.push(`Cashback -${brl(p.cashbackUsado)}`);
+    if(p.bonusAniversario > 0) partes.push(`🎂 Aniversário -${brl(p.bonusAniversario)}`);
     return `<div class="pedido">
       <div class="topo">
-        <span class="cod">${esc(p.codigo)}</span>
+        <span class="cod">${esc(p.codigo)}${p.pix ? '<span class="tag">Pix</span>' : ''}</span>
         <span class="status ${esc(p.status)}">${esc(ROTULO_STATUS[p.status]||p.status)}</span>
       </div>
       <div class="cli">${esc(p.cliente.nome)} · ${esc(p.cliente.telefone||'')}<br>${esc(p.cliente.endereco||'')} ${p.cliente.bairro?'· '+esc(p.cliente.bairro):''}</div>
       <div class="itens">${itens}<br>
-        ${p.cashbackUsado>0?`Subtotal ${brl(p.subtotal)} · Cashback -${brl(p.cashbackUsado)}<br><b>Total ${brl(p.total)}</b>`:`<b>${brl(p.subtotal)}</b>`}
+        ${partes.join(' · ')}<br><b>Total ${brl(p.total ?? p.subtotal)}</b>
         · ${esc(p.pagamento||'pagamento a combinar')}${p.trocoPara?' (troco p/ '+esc(p.trocoPara)+')':''}</div>
       ${p.observacao?`<div class="cli">Obs: ${esc(p.observacao)}</div>`:''}
       <div class="acoes">

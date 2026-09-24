@@ -9,7 +9,6 @@ import seed from './ofertas.seed.json';
  * em produção elas vêm da API com data real.
  */
 type SeedItem = (typeof seed.ofertas)[number] & {
-  precoClube?: number;
   relampago?: boolean;
   perecivel?: boolean;
 };
@@ -33,7 +32,6 @@ export const ofertas: Oferta[] = (seed.ofertas as SeedItem[]).map((o) => ({
   categoria: o.categoria as Oferta['categoria'],
   precoNormal: o.precoNormal,
   precoOferta: o.precoOferta,
-  precoClube: o.precoClube,
   unidade: o.unidade,
   imagem: produtoImagens[o.id],
   // perecíveis (hortifruti / açougue) valem menos dias

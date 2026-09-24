@@ -8,10 +8,8 @@ import React, {
   useState,
 } from 'react';
 import { loja } from '../data/loja';
+import { ehAniversarioHoje, parseAniversario } from '../lib/aniversario';
 import { lerQrNotaFiscal, notaEhDaLoja } from '../lib/nfe';
-
-/** Bônus de boas-vindas creditado no cadastro (R$) — só para o Clube ganhar tração. */
-const BONUS_BOAS_VINDAS = 25;
 
 export interface NotaRegistrada {
   chave: string;
@@ -40,8 +38,21 @@ export interface Socio {
   /** número do cartão fidelidade (gerado no cadastro) */
   cartao: string;
   desde: string; // ISO date
+  /** dia e mês do aniversário ("MM-DD") — base do bônus de aniversário; definido uma vez só */
+  aniversario?: string;
+  /** quando o bônus de aniversário foi usado pela última vez (vale 1x por ano) */
+  bonusAniversarioUsadoEm?: string;
   notas: NotaRegistrada[];
   movimentos: MovimentoCashback[];
+}
+
+export interface StatusAniversario {
+  /** "MM-DD", ou undefined se o sócio ainda não informou */
+  data?: string;
+  /** hoje é o dia do aniversário */
+  hoje: boolean;
+  /** o bônus deste ano já foi usado */
+  usadoEsteAno: boolean;
 }
 
 /** Cashback de uma nota: % do valor. Sem valor no QR, fica 0 (ajuste depois pelo backend). */
@@ -66,8 +77,15 @@ interface ClubeState {
   totalGasto: number;
   /** extrato: notas + movimentos, mais recentes primeiro */
   extrato: ExtratoItem[];
-  entrar: (dados: { nome: string; cpf: string; telefone: string }) => Promise<void>;
+  aniversario: StatusAniversario;
+  entrar: (dados: { nome: string; cpf: string; telefone: string; aniversario?: string }) => Promise<void>;
   sair: () => Promise<void>;
+  /** informa o aniversário ("15/03"); só aceita uma vez (não dá pra trocar depois) */
+  definirAniversario: (txt: string) => Promise<{ ok: true } | { ok: false; erro: string }>;
+  /** valor do bônus de aniversário que vale AGORA nessa compra (0 = não vale) */
+  bonusAniversarioDisponivel: (subtotal: number) => number;
+  /** marca o bônus deste ano como usado */
+  usarBonusAniversario: () => Promise<void>;
   registrarNotaFiscal: (conteudoQr: string) => Promise<ResultadoScan>;
   usarCashback: (valor: number, descricao: string) => Promise<boolean>;
   estornarCashback: (valor: number, descricao: string) => Promise<void>;
@@ -116,7 +134,7 @@ export function ClubeProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const entrar = useCallback(
-    async (dados: { nome: string; cpf: string; telefone: string }) => {
+    async (dados: { nome: string; cpf: string; telefone: string; aniversario?: string }) => {
       // v1: cadastro local. Depois isso chama a API do Clube Amazonas.
       const agora = new Date().toISOString();
       await persistir({
@@ -125,16 +143,9 @@ export function ClubeProvider({ children }: { children: React.ReactNode }) {
         telefone: dados.telefone,
         cartao: gerarCartao(dados.cpf),
         desde: agora,
+        aniversario: (dados.aniversario && parseAniversario(dados.aniversario)) || undefined,
         notas: [],
-        movimentos: [
-          {
-            id: uid(),
-            tipo: 'bonus',
-            descricao: 'Bônus de boas-vindas do Clube',
-            valor: BONUS_BOAS_VINDAS,
-            em: agora,
-          },
-        ],
+        movimentos: [],
       });
     },
     [persistir],
@@ -146,7 +157,6 @@ export function ClubeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (carregando || socio) return;
     if (process.env.EXPO_PUBLIC_DEMO_SOCIO !== '1') return;
-    const agora = new Date().toISOString();
     const antes = (h: number) => new Date(Date.now() - h * 36e5).toISOString();
     persistir({
       nome: 'Ana Paula Ribeiro',
@@ -173,9 +183,7 @@ export function ClubeProvider({ children }: { children: React.ReactNode }) {
         },
       ],
       movimentos: [
-        { id: uid(), tipo: 'bonus', descricao: 'Bônus de boas-vindas do Clube', valor: BONUS_BOAS_VINDAS, em: antes(720) },
         { id: uid(), tipo: 'uso', descricao: 'Usado no pedido AMZ-4821', valor: -12, em: antes(60) },
-        { id: uid(), tipo: 'bonus', descricao: 'Cupom de aniversário', valor: 15, em: agora },
       ],
     });
   }, [carregando, socio, persistir]);
@@ -240,6 +248,34 @@ export function ClubeProvider({ children }: { children: React.ReactNode }) {
     [socio, persistir],
   );
 
+  const definirAniversario = useCallback(
+    async (txt: string) => {
+      if (!socio) return { ok: false as const, erro: 'Entre no Clube primeiro.' };
+      if (socio.aniversario) return { ok: false as const, erro: 'O aniversário já foi informado e não pode ser alterado.' };
+      const mmdd = parseAniversario(txt);
+      if (!mmdd) return { ok: false as const, erro: 'Data inválida. Use dia e mês, ex.: 15/03.' };
+      await persistir({ ...socio, aniversario: mmdd });
+      return { ok: true as const };
+    },
+    [socio, persistir],
+  );
+
+  const bonusAniversarioDisponivel = useCallback(
+    (subtotal: number) => {
+      if (!socio || !ehAniversarioHoje(socio.aniversario)) return 0;
+      const usadoEm = socio.bonusAniversarioUsadoEm;
+      if (usadoEm && new Date(usadoEm).getFullYear() === new Date().getFullYear()) return 0;
+      if (round2(subtotal) < loja.bonusAniversario.compraMinima) return 0;
+      return loja.bonusAniversario.valor;
+    },
+    [socio],
+  );
+
+  const usarBonusAniversario = useCallback(async () => {
+    if (!socio) return;
+    await persistir({ ...socio, bonusAniversarioUsadoEm: new Date().toISOString() });
+  }, [socio, persistir]);
+
   const value = useMemo<ClubeState>(() => {
     const notas = socio?.notas ?? [];
     const movimentos = socio?.movimentos ?? [];
@@ -265,16 +301,37 @@ export function ClubeProvider({ children }: { children: React.ReactNode }) {
     return {
       carregando,
       socio,
+      aniversario: {
+        data: socio?.aniversario,
+        hoje: ehAniversarioHoje(socio?.aniversario),
+        usadoEsteAno:
+          !!socio?.bonusAniversarioUsadoEm &&
+          new Date(socio.bonusAniversarioUsadoEm).getFullYear() === new Date().getFullYear(),
+      },
       cashback: socio ? calcularSaldo(socio) : 0,
       totalGasto: notas.reduce((s, n) => s + (n.valor ?? 0), 0),
       extrato,
       entrar,
       sair,
+      definirAniversario,
+      bonusAniversarioDisponivel,
+      usarBonusAniversario,
       registrarNotaFiscal,
       usarCashback,
       estornarCashback,
     };
-  }, [carregando, socio, entrar, sair, registrarNotaFiscal, usarCashback, estornarCashback]);
+  }, [
+    carregando,
+    socio,
+    entrar,
+    sair,
+    definirAniversario,
+    bonusAniversarioDisponivel,
+    usarBonusAniversario,
+    registrarNotaFiscal,
+    usarCashback,
+    estornarCashback,
+  ]);
 
   return <ClubeContext.Provider value={value}>{children}</ClubeContext.Provider>;
 }

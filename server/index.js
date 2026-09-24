@@ -10,6 +10,21 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const PORT = process.env.PORT || 3333;
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'trocar-este-token';
 
+// Regras da loja — espelham src/data/loja.ts (mudou lá, mude aqui).
+const LOJA = {
+  /** entrega grátis quando os itens somam isto ou mais (R$); abaixo cobra a taxa */
+  entregaGratisAPartirDe: 100,
+  taxaEntrega: 10,
+  /** bônus do Clube: só no aniversário do sócio, em compras a partir de compraMinima */
+  bonusAniversario: { valor: 10, compraMinima: 200 },
+  /** Pix pedido ao cliente quando a loja confirma um pedido pago por Pix */
+  pix: {
+    tipoChave: process.env.PIX_TIPO || 'CNPJ',
+    chave: process.env.PIX_CHAVE || '36901718000104',
+    favorecido: 'Supermercado Amazonas',
+  },
+};
+
 const expo = new Expo();
 const app = express();
 app.use(cors());
@@ -51,7 +66,29 @@ const PUSH_STATUS = {
   cancelado: ['Pedido cancelado', 'Fale com a gente pelo WhatsApp para entender o que houve.'],
 };
 
-const semToken = ({ pushToken, ...p }) => p;
+const round2 = (n) => Math.round(n * 100) / 100;
+const brl = (n) => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+/** CNPJ/CPF ganham pontuação na tela; outras chaves (celular, e-mail, aleatória) vão como estão. */
+function formatarChavePix(tipo, chave) {
+  const d = String(chave).replace(/\D/g, '');
+  if (tipo === 'CNPJ' && d.length === 14) return d.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/, '$1.$2.$3/$4-$5');
+  if (tipo === 'CPF' && d.length === 11) return d.replace(/^(\d{3})(\d{3})(\d{3})(\d{2})$/, '$1.$2.$3-$4');
+  return String(chave);
+}
+
+/** Pedido pago por Pix? (pedidos antigos não têm pagamentoId — cai no texto) */
+const ehPix = (p) => p.pagamentoId === 'pix' || (!p.pagamentoId && /pix/i.test(p.pagamento || ''));
+
+/** O que o cliente/painel enxergam: sem o token de push e, se for Pix, com os dados pra pagar. */
+function publico({ pushToken, ...p }) {
+  if (!ehPix(p)) return p;
+  const { tipoChave, chave, favorecido } = LOJA.pix;
+  return {
+    ...p,
+    pix: { tipoChave, chave, chaveFormatada: formatarChavePix(tipoChave, chave), favorecido, valor: p.total },
+  };
+}
 
 /** Número > 0 arredondado a centavos, ou null se inválido. */
 function precoValido(v) {
@@ -59,8 +96,8 @@ function precoValido(v) {
   return Number.isFinite(n) && n > 0 ? Math.round(n * 100) / 100 : null;
 }
 
-/** Aplica preço/preço-sócio a um produto e registra no histórico. Retorna o produto. */
-function aplicarPreco(produto, { preco, precoClube }) {
+/** Aplica o preço a um produto e registra no histórico. Retorna o produto. */
+function aplicarPreco(produto, { preco }) {
   const agora = new Date().toISOString();
   const novoPreco = precoValido(preco);
   if (novoPreco != null && novoPreco !== produto.preco) {
@@ -69,12 +106,6 @@ function aplicarPreco(produto, { preco, precoClube }) {
       ...(produto.historicoPreco ?? []),
     ].slice(0, 10);
     produto.preco = novoPreco;
-    produto.atualizadoEm = agora;
-  }
-  if (precoClube !== undefined) {
-    const c = precoValido(precoClube);
-    if (c == null) delete produto.precoClube;
-    else produto.precoClube = c;
     produto.atualizadoEm = agora;
   }
   return produto;
@@ -137,6 +168,16 @@ app.post('/pedidos', (req, res) => {
     return res.status(400).json({ erro: 'itens e cliente.nome são obrigatórios' });
   }
   const agora = new Date().toISOString();
+  const subtotal = round2(Number(b.subtotal) || 0);
+  const cashbackUsado = round2(Number(b.cashbackUsado) || 0);
+  // a taxa é decidida aqui (não confia no valor que veio do app)
+  const taxaEntrega = subtotal >= LOJA.entregaGratisAPartirDe ? 0 : LOJA.taxaEntrega;
+  // o bônus só vale no valor combinado e em compra a partir do mínimo; o dia do aniversário é
+  // conferido pela loja (o cadastro do Clube é local no aparelho do cliente)
+  const bonusAniversario =
+    Number(b.bonusAniversario) === LOJA.bonusAniversario.valor && subtotal >= LOJA.bonusAniversario.compraMinima
+      ? LOJA.bonusAniversario.valor
+      : 0;
   const pedido = {
     id: randomUUID(),
     codigo: 'AMZ-' + Math.floor(1000 + Math.random() * 9000),
@@ -145,13 +186,15 @@ app.post('/pedidos', (req, res) => {
     historico: [{ status: 'aguardando', em: agora }],
     cliente: b.cliente,
     pagamento: b.pagamento ?? null,
+    pagamentoId: b.pagamentoId ?? null,
     trocoPara: b.trocoPara ?? null,
     observacao: b.observacao ?? null,
     itens: b.itens,
-    subtotal: Number(b.subtotal) || 0,
-    cashbackUsado: Number(b.cashbackUsado) || 0,
-    total:
-      Math.round(((Number(b.subtotal) || 0) - (Number(b.cashbackUsado) || 0)) * 100) / 100,
+    subtotal,
+    taxaEntrega,
+    cashbackUsado,
+    bonusAniversario,
+    total: Math.max(0, round2(subtotal - cashbackUsado - bonusAniversario + taxaEntrega)),
     pushToken: b.pushToken ?? null,
   };
   db.data.pedidos.unshift(pedido);
@@ -162,7 +205,7 @@ app.post('/pedidos', (req, res) => {
 app.get('/pedidos/:id', (req, res) => {
   const p = db.data.pedidos.find((x) => x.id === req.params.id);
   if (!p) return res.status(404).json({ erro: 'Pedido não encontrado' });
-  res.json(semToken(p));
+  res.json(publico(p));
 });
 
 // ---------- API do painel admin ----------
@@ -205,8 +248,6 @@ app.post('/admin/produtos', exigirAdmin, (req, res) => {
   };
   if (b.marca) produto.marca = String(b.marca).trim();
   if (b.modoVenda && MODOS_VENDA.includes(b.modoVenda)) produto.modoVenda = b.modoVenda;
-  const c = precoValido(b.precoClube);
-  if (c != null) produto.precoClube = c;
 
   const i = db.data.produtos.findIndex((p) => p.id === id);
   if (i >= 0) produto.historicoPreco = db.data.produtos[i].historicoPreco ?? [];
@@ -216,7 +257,7 @@ app.post('/admin/produtos', exigirAdmin, (req, res) => {
   res.json(produto);
 });
 
-/** Edição parcial de um produto (preço, preço-sócio, dados básicos). */
+/** Edição parcial de um produto (preço, dados básicos). */
 app.patch('/admin/produtos/:id', exigirAdmin, (req, res) => {
   const produto = db.data.produtos.find((p) => p.id === req.params.id);
   if (!produto) return res.status(404).json({ erro: 'Produto não encontrado' });
@@ -244,7 +285,7 @@ app.patch('/admin/produtos/:id', exigirAdmin, (req, res) => {
   res.json(produto);
 });
 
-/** Atualização de preços em lote — [{ id, preco, precoClube? }]. */
+/** Atualização de preços em lote — [{ id, preco }]. */
 app.post('/admin/produtos/precos', exigirAdmin, (req, res) => {
   const itens = Array.isArray(req.body) ? req.body : req.body?.itens;
   if (!Array.isArray(itens) || itens.length === 0) {
@@ -271,7 +312,7 @@ app.delete('/admin/produtos/:id', exigirAdmin, (req, res) => {
 });
 
 app.get('/admin/pedidos', exigirAdmin, (_req, res) => {
-  res.json(db.data.pedidos.map(semToken));
+  res.json(db.data.pedidos.map(publico));
 });
 
 app.post('/admin/pedidos/:id/status', exigirAdmin, async (req, res) => {
@@ -286,7 +327,13 @@ app.post('/admin/pedidos/:id/status', exigirAdmin, async (req, res) => {
   if (novo === 'cancelado' && req.body.motivo) p.canceladoMotivo = req.body.motivo;
   db.salvar();
 
-  const t = PUSH_STATUS[novo];
+  const t =
+    novo === 'aceito' && ehPix(p)
+      ? [
+          'Pedido confirmado ✅',
+          `Faça o Pix de ${brl(p.total)} e envie o comprovante no WhatsApp pra gente começar a separar.`,
+        ]
+      : PUSH_STATUS[novo];
   if (t) await enviarPush(p.pushToken, t[0], t[1], { tipo: 'pedido', pedidoId: p.id });
 
   res.json({ ok: true, status: p.status });
@@ -308,7 +355,6 @@ app.post('/admin/ofertas', exigirAdmin, (req, res) => {
     categoria: o.categoria ?? 'Mercearia',
     precoNormal: Number(o.precoNormal),
     precoOferta: Number(o.precoOferta),
-    precoClube: o.precoClube != null && o.precoClube !== '' ? Number(o.precoClube) : undefined,
     unidade: o.unidade ?? 'un',
     imagem: o.imagem || '', // vazio = o app usa a foto empacotada (por id) ou o placeholder de categoria
     validade: o.validade || new Date(Date.now() + 7 * 864e5).toISOString(),

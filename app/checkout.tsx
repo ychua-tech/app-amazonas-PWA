@@ -18,18 +18,18 @@ import { Botao } from '../src/components/ui';
 import { useCarrinho } from '../src/context/CarrinhoContext';
 import { useClube } from '../src/context/ClubeContext';
 import { usePedidos } from '../src/context/PedidosContext';
-import { formasPagamentoPedido, type FormaPagamentoPedido } from '../src/data/loja';
+import { formasPagamentoPedido, loja, type FormaPagamentoPedido } from '../src/data/loja';
 import { brl } from '../src/lib/format';
 import { enviarPedidoWhatsApp, type DadosEntrega } from '../src/lib/pedido';
+import { faltaParaEntregaGratis, round2, taxaDeEntrega, totalDoPedido } from '../src/lib/valores';
 import { colors, font, radius, shadow, spacing } from '../src/theme';
-
-const round2 = (n: number) => Math.round(n * 100) / 100;
 
 export default function Checkout() {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const { itens, subtotal, limpar } = useCarrinho();
-  const { socio, cashback, usarCashback } = useClube();
+  const { socio, cashback, usarCashback, aniversario, bonusAniversarioDisponivel, usarBonusAniversario } =
+    useClube();
   const { criar } = usePedidos();
 
   const [nome, setNome] = useState(socio?.nome ?? '');
@@ -43,11 +43,15 @@ export default function Checkout() {
   const [usarSaldo, setUsarSaldo] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
+  // entrega grátis a partir de R$ 100 em itens; abaixo disso, taxa fixa
+  const taxa = taxaDeEntrega(subtotal);
+  // bônus de aniversário: só no dia, 1x por ano, em compras a partir de R$ 200
+  const bonus = bonusAniversarioDisponivel(subtotal);
   const cashbackAplicado = useMemo(
-    () => (usarSaldo ? round2(Math.min(cashback, subtotal)) : 0),
-    [usarSaldo, cashback, subtotal],
+    () => (usarSaldo ? round2(Math.min(cashback, Math.max(0, subtotal - bonus))) : 0),
+    [usarSaldo, cashback, subtotal, bonus],
   );
-  const total = round2(subtotal - cashbackAplicado);
+  const total = totalDoPedido({ subtotal, cashback: cashbackAplicado, bonus, taxaEntrega: taxa });
   const qtdItens = itens.reduce((s, i) => s + i.quantidade, 0);
 
   const valido = useMemo(
@@ -69,6 +73,8 @@ export default function Checkout() {
       observacao: observacao.trim() || undefined,
       cartaoClube: socio?.cartao,
       cashbackUsado: cashbackAplicado || undefined,
+      bonusAniversario: bonus || undefined,
+      taxaEntrega: taxa,
     };
     try {
       const resumo = await criar({
@@ -81,6 +87,7 @@ export default function Checkout() {
         },
         pagamento:
           formasPagamentoPedido.find((f) => f.id === pagamento)?.rotulo ?? pagamento,
+        pagamentoId: pagamento,
         trocoPara: dados.trocoPara,
         observacao: dados.observacao,
         itens: itens.map((i) => ({
@@ -92,16 +99,20 @@ export default function Checkout() {
           pesoKg: i.pesoKg,
         })),
         subtotal,
+        taxaEntrega: taxa,
         cashbackUsado: cashbackAplicado || undefined,
+        bonusAniversario: bonus || undefined,
       });
       if (cashbackAplicado > 0) {
         await usarCashback(cashbackAplicado, `Usado no pedido ${resumo.codigo}`);
       }
+      if (bonus > 0) await usarBonusAniversario();
       await enviarPedidoWhatsApp(itens, dados, resumo.codigo);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       limpar();
       router.replace(`/pedido/${resumo.id}`);
     } catch {
+      if (bonus > 0) await usarBonusAniversario(); // o pedido segue pelo WhatsApp com o bônus
       await enviarPedidoWhatsApp(itens, dados);
       limpar();
       router.replace('/');
@@ -145,7 +156,7 @@ export default function Checkout() {
             />
           </Secao>
 
-          <Secao titulo="Pagamento na entrega" icone="wallet-outline">
+          <Secao titulo="Forma de pagamento" icone="wallet-outline">
             <View style={styles.card}>
               {formasPagamentoPedido.map((f, i) => (
                 <Pressable
@@ -162,6 +173,12 @@ export default function Checkout() {
                 </Pressable>
               ))}
             </View>
+            {pagamento === 'pix' && (
+              <Text style={styles.dicaPix}>
+                Assim que o mercado confirmar seu pedido, você recebe a chave Pix aqui no app e
+                no WhatsApp. É só pagar e enviar o comprovante pra gente começar a separar.
+              </Text>
+            )}
             {pagamento === 'dinheiro' && (
               <Campo
                 label="Troco para quanto?"
@@ -173,12 +190,32 @@ export default function Checkout() {
             )}
           </Secao>
 
+          {aniversario.hoje && !aniversario.usadoEsteAno && (
+            <View style={styles.aniversarioCard}>
+              <Ionicons name="gift-outline" size={22} color={colors.primaryDark} />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.aniversarioTitulo}>
+                  {bonus > 0
+                    ? `Feliz aniversário! Bônus de ${brl(bonus)} aplicado`
+                    : 'Hoje é seu aniversário!'}
+                </Text>
+                {bonus === 0 && (
+                  <Text style={styles.aniversarioSub}>
+                    Faltam {brl(round2(loja.bonusAniversario.compraMinima - subtotal))} em compras
+                    para usar seu bônus de {brl(loja.bonusAniversario.valor)} (vale a partir de{' '}
+                    {brl(loja.bonusAniversario.compraMinima)}, só hoje).
+                  </Text>
+                )}
+              </View>
+            </View>
+          )}
+
           {socio && cashback > 0 && (
             <Secao titulo="Cashback do Clube" icone="cash-outline">
               <View style={styles.cashbackCard}>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.cashbackTitulo}>
-                    Usar {brl(Math.min(cashback, subtotal))} de saldo
+                    Usar {brl(Math.min(cashback, Math.max(0, subtotal - bonus)))} de saldo
                   </Text>
                   <Text style={styles.cashbackSub}>
                     Você tem {brl(cashback)} disponível. Abate direto no total.
@@ -211,6 +248,24 @@ export default function Checkout() {
           {/* Resumo de valores */}
           <View style={styles.card}>
             <LinhaValor label={`Itens (${qtdItens})`} valor={brl(subtotal)} />
+            <LinhaValor
+              label="Taxa de entrega"
+              valor={taxa > 0 ? brl(taxa) : 'Grátis'}
+              cor={taxa > 0 ? undefined : colors.success}
+            />
+            {taxa > 0 && (
+              <Text style={styles.dicaEntrega}>
+                Faltam {brl(faltaParaEntregaGratis(subtotal))} em itens para a entrega ser grátis
+                (a partir de {brl(loja.entregaGratisAPartirDe)}).
+              </Text>
+            )}
+            {bonus > 0 && (
+              <LinhaValor
+                label="Bônus de aniversário"
+                valor={`- ${brl(bonus)}`}
+                cor={colors.cashback}
+              />
+            )}
             {cashbackAplicado > 0 && (
               <LinhaValor
                 label="Cashback do Clube"
@@ -223,8 +278,8 @@ export default function Checkout() {
               <Text style={styles.totalValor}>{brl(total)}</Text>
             </View>
             <Text style={styles.aviso}>
-              A taxa de entrega é combinada no WhatsApp. Preços conforme o app,
-              conferidos na separação.
+              Preços conforme o app; itens por peso têm valor estimado e são conferidos na
+              separação.
             </Text>
           </View>
         </ScrollView>
@@ -339,6 +394,27 @@ const styles = StyleSheet.create({
   radioLinha: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md },
   linhaBorda: { borderTopWidth: 1, borderTopColor: colors.borderSoft },
   radioTexto: { fontSize: font.sizeSm, color: colors.text },
+  dicaPix: {
+    fontSize: font.sizeXs,
+    color: colors.primaryDark,
+    backgroundColor: colors.primarySoft,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    lineHeight: 17,
+  },
+  dicaEntrega: { fontSize: font.sizeXs, color: colors.textSubtle, marginBottom: spacing.xs },
+  aniversarioCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.accentSoft,
+    borderRadius: radius.lg,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    padding: spacing.lg,
+  },
+  aniversarioTitulo: { fontSize: font.sizeMd, fontWeight: font.weightBold, color: colors.primaryDark },
+  aniversarioSub: { fontSize: font.sizeXs, color: colors.textMuted, marginTop: 2, lineHeight: 17 },
 
   cashbackCard: {
     flexDirection: 'row',

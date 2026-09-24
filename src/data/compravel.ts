@@ -49,7 +49,6 @@ export function ofertaParaCompravel(o: Oferta): ItemCompravel {
     unidade: o.unidade,
     preco: o.precoOferta,
     precoNormal: o.precoNormal,
-    precoClube: o.precoClube,
     imagem: o.imagem,
     modoVenda: modo,
     pesosSugeridos: o.pesosSugeridos ?? pesosSugeridosPara(modo, o.categoria),
@@ -71,7 +70,6 @@ export function produtoParaOfertaSemDesconto(p: Produto): Oferta {
     categoria: p.categoria,
     precoNormal: p.preco,
     precoOferta: p.preco,
-    precoClube: p.precoClube,
     unidade: p.unidade,
     imagem: p.imagem,
     validade: '2099-12-31T23:59:59.999Z', // sem promoção — não expira
@@ -91,7 +89,6 @@ export function produtoParaCompravel(p: Produto): ItemCompravel {
     unidade: p.unidade,
     preco: p.preco,
     precoNormal: undefined,
-    precoClube: p.precoClube,
     imagem: p.imagem,
     modoVenda: modo,
     pesosSugeridos: p.pesosSugeridos ?? pesosSugeridosPara(modo, p.categoria),

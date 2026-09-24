@@ -61,12 +61,6 @@ export default function ProdutoDetalhe() {
               {item.modoVenda === 'peso' ? ' / kg' : ` / ${item.unidade}`}
             </Text>
           </View>
-          {item.precoClube != null && (
-            <View style={styles.clube}>
-              <Ionicons name="heart" size={14} color={colors.primary} />
-              <Text style={styles.clubeTexto}>Sócio Clube Amazonas: {brl(item.precoClube)}</Text>
-            </View>
-          )}
 
           <View style={styles.modoBox}>
             <Ionicons
@@ -126,16 +120,6 @@ const styles = StyleSheet.create({
   precoRow: { flexDirection: 'row', alignItems: 'baseline', marginTop: spacing.xs },
   preco: { fontSize: font.size2xl, fontWeight: font.weightBold, color: colors.primary },
   unidade: { fontSize: font.sizeSm, color: colors.textMuted },
-  clube: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-    backgroundColor: colors.primarySoft,
-    borderRadius: radius.sm,
-    padding: spacing.sm,
-    marginTop: spacing.xs,
-  },
-  clubeTexto: { fontSize: font.sizeXs, color: colors.primaryDark, fontWeight: font.weightMedium },
   modoBox: {
     flexDirection: 'row',
     alignItems: 'center',

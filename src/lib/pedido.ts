@@ -4,6 +4,7 @@ import { formatarPeso } from '../data/compravel';
 import { formasPagamentoPedido, loja, type FormaPagamentoPedido } from '../data/loja';
 import { abrirWhatsApp } from './contato';
 import { brl } from './format';
+import { taxaDeEntrega, totalDoPedido } from './valores';
 
 export interface DadosEntrega {
   nome: string;
@@ -16,6 +17,10 @@ export interface DadosEntrega {
   observacao?: string;
   cartaoClube?: string;
   cashbackUsado?: number;
+  /** bônus de aniversário aplicado (R$) */
+  bonusAniversario?: number;
+  /** taxa de entrega (R$); 0 = grátis. Sem valor, calcula pelo subtotal. */
+  taxaEntrega?: number;
 }
 
 /** Monta o texto do pedido que vai para o WhatsApp do mercado. */
@@ -50,13 +55,27 @@ export function montarMensagemPedido(
       );
     }
   }
+  const taxa = dados.taxaEntrega ?? taxaDeEntrega(subtotal);
   linhas.push('', `Subtotal estimado: ${brl(subtotal)}`);
+  linhas.push(
+    taxa > 0
+      ? `Taxa de entrega: ${brl(taxa)}`
+      : `Entrega: *grátis* (compras a partir de ${brl(loja.entregaGratisAPartirDe)})`,
+  );
   if (dados.cashbackUsado && dados.cashbackUsado > 0) {
     linhas.push(`Cashback do Clube: -${brl(dados.cashbackUsado)}`);
   }
-  const total = subtotal - (dados.cashbackUsado ?? 0);
+  if (dados.bonusAniversario && dados.bonusAniversario > 0) {
+    linhas.push(`🎂 Bônus de aniversário: -${brl(dados.bonusAniversario)}`);
+  }
+  const total = totalDoPedido({
+    subtotal,
+    cashback: dados.cashbackUsado,
+    bonus: dados.bonusAniversario,
+    taxaEntrega: taxa,
+  });
   linhas.push(`*Total: ${brl(total)}*`);
-  linhas.push('_Taxa de entrega a combinar. Preços conforme o app, sujeitos a conferência na loja._', '');
+  linhas.push('_Preços conforme o app; itens por peso são ajustados na separação._', '');
 
   linhas.push('*Entrega:*');
   linhas.push(`Nome: ${dados.nome}`);
@@ -72,6 +91,9 @@ export function montarMensagemPedido(
   linhas.push('', `*Pagamento:* ${pgto}`);
   if (dados.pagamento === 'dinheiro' && dados.trocoPara) {
     linhas.push(`Troco para: ${dados.trocoPara}`);
+  }
+  if (dados.pagamento === 'pix') {
+    linhas.push('_Assim que vocês confirmarem o pedido, envie a chave Pix pra eu pagar e mandar o comprovante._');
   }
   if (dados.observacao) linhas.push('', `*Observação:* ${dados.observacao}`);
 

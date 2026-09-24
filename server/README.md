@@ -53,8 +53,8 @@ Reinicie o `npx expo start`. Sem esse `.env`, o app roda com dados de exemplo.
 | GET | `/admin/ping` | token | valida o token (login do app) |
 | GET | `/admin/produtos` | token | lista o catálogo |
 | POST | `/admin/produtos` | token | cria/edita um produto (upsert por `id`) |
-| PATCH | `/admin/produtos/:id` | token | edição parcial (`preco`, `precoClube`, ...) |
-| POST | `/admin/produtos/precos` | token | `[{ id, preco, precoClube? }]` — preços em lote |
+| PATCH | `/admin/produtos/:id` | token | edição parcial (`preco`, `nome`, `categoria`, ...) |
+| POST | `/admin/produtos/precos` | token | `[{ id, preco }]` — preços em lote |
 | DELETE | `/admin/produtos/:id` | token | remove produto |
 | GET | `/admin/ofertas` | token | lista tudo (painel) |
 | POST | `/admin/ofertas` | token | cria/edita oferta |

@@ -14,22 +14,26 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Botao, Card } from '../../src/components/ui';
-import { useClube, type ExtratoItem } from '../../src/context/ClubeContext';
+import { useClube, type ExtratoItem, type StatusAniversario } from '../../src/context/ClubeContext';
 import { loja } from '../../src/data/loja';
+import { formatarAniversario, parseAniversario } from '../../src/lib/aniversario';
 import { brl } from '../../src/lib/format';
 import { cashbackEmDemonstracao } from '../../src/lib/nfe';
 import { colors, font, gradiente, radius, shadow, spacing } from '../../src/theme';
 
 const BENEFICIOS = [
   { icone: 'cash-outline', texto: `${loja.cashbackPercentual}% de cashback em cada nota fiscal, para abater nas próximas compras` },
-  { icone: 'pricetag-outline', texto: 'Preço de sócio em centenas de produtos' },
   { icone: 'flash-outline', texto: 'Acesso antecipado às ofertas relâmpago' },
-  { icone: 'gift-outline', texto: 'Bônus de boas-vindas e cupom de aniversário' },
+  {
+    icone: 'gift-outline',
+    texto: `Bônus de aniversário: ${brl(loja.bonusAniversario.valor)} de desconto em compras a partir de ${brl(loja.bonusAniversario.compraMinima)}, válido só no seu dia`,
+  },
 ] as const;
 
 export default function ClubeScreen() {
   const insets = useSafeAreaInsets();
-  const { carregando, socio, cashback, totalGasto, extrato, entrar, sair } = useClube();
+  const { carregando, socio, cashback, totalGasto, extrato, entrar, sair, aniversario, definirAniversario } =
+    useClube();
   const router = useRouter();
 
   if (carregando) return null;
@@ -50,6 +54,8 @@ export default function ClubeScreen() {
           cashback={cashback}
           totalGasto={totalGasto}
           totalNotas={socio.notas.length}
+          aniversario={aniversario}
+          onDefinirAniversario={definirAniversario}
           extrato={extrato}
           onEscanear={() => router.push('/nota-scanner')}
           onCarrinho={() => router.push('/carrinho')}
@@ -82,6 +88,8 @@ function AreaSocio({
   cashback,
   totalGasto,
   totalNotas,
+  aniversario,
+  onDefinirAniversario,
   extrato,
   onEscanear,
   onCarrinho,
@@ -92,6 +100,8 @@ function AreaSocio({
   cashback: number;
   totalGasto: number;
   totalNotas: number;
+  aniversario: StatusAniversario;
+  onDefinirAniversario: (txt: string) => Promise<{ ok: true } | { ok: false; erro: string }>;
   extrato: ExtratoItem[];
   onEscanear: () => void;
   onCarrinho: () => void;
@@ -143,6 +153,8 @@ function AreaSocio({
       {cashback > 0 && (
         <Botao titulo="Usar cashback numa compra" onPress={onCarrinho} />
       )}
+
+      <AniversarioCard status={aniversario} onDefinir={onDefinirAniversario} />
 
       {/* Stats */}
       <View style={styles.statsRow}>
@@ -227,25 +239,84 @@ function AreaSocio({
   );
 }
 
+function AniversarioCard({
+  status,
+  onDefinir,
+}: {
+  status: StatusAniversario;
+  onDefinir: (txt: string) => Promise<{ ok: true } | { ok: false; erro: string }>;
+}) {
+  const [txt, setTxt] = useState('');
+  const [erro, setErro] = useState<string | null>(null);
+  const [salvando, setSalvando] = useState(false);
+  const { valor, compraMinima } = loja.bonusAniversario;
+  const regra = `Bônus de ${brl(valor)} em compras a partir de ${brl(compraMinima)}, válido só no dia do seu aniversário (1 vez por ano).`;
+
+  async function salvar() {
+    setSalvando(true);
+    setErro(null);
+    const r = await onDefinir(txt);
+    setSalvando(false);
+    if (r.ok) Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    else setErro(r.erro);
+  }
+
+  if (!status.data) {
+    return (
+      <Card style={{ gap: spacing.sm }}>
+        <View style={styles.aniversarioTopo}>
+          <Ionicons name="gift-outline" size={20} color={colors.primary} />
+          <Text style={styles.escanearTitulo}>Seu aniversário</Text>
+        </View>
+        <Text style={styles.escanearTexto}>
+          Informe o dia e o mês pra ganhar o bônus. {regra} Depois de salvo, não dá pra alterar.
+        </Text>
+        <Campo label="Dia/mês" valor={txt} onChange={setTxt} placeholder="15/03" keyboardType="number-pad" />
+        {erro && <Text style={styles.erroTexto}>{erro}</Text>}
+        <Botao titulo="Salvar aniversário" onPress={salvar} disabled={txt.trim().length < 3} carregando={salvando} />
+      </Card>
+    );
+  }
+
+  return (
+    <Card style={{ gap: spacing.xs }}>
+      <View style={styles.aniversarioTopo}>
+        <Ionicons name="gift-outline" size={20} color={colors.primary} />
+        <Text style={styles.escanearTitulo}>Aniversário: {formatarAniversario(status.data)}</Text>
+      </View>
+      <Text style={styles.escanearTexto}>
+        {status.hoje && !status.usadoEsteAno
+          ? `Hoje é o seu dia! ${regra} O desconto entra sozinho no carrinho.`
+          : status.usadoEsteAno
+            ? 'Você já usou o bônus de aniversário deste ano. Ele volta no ano que vem!'
+            : regra}
+      </Text>
+    </Card>
+  );
+}
+
 function Cadastro({
   onEntrar,
 }: {
-  onEntrar: (d: { nome: string; cpf: string; telefone: string }) => Promise<void>;
+  onEntrar: (d: { nome: string; cpf: string; telefone: string; aniversario?: string }) => Promise<void>;
 }) {
   const [nome, setNome] = useState('');
   const [cpf, setCpf] = useState('');
   const [telefone, setTelefone] = useState('');
+  const [aniversario, setAniversario] = useState('');
   const [enviando, setEnviando] = useState(false);
 
+  const aniversarioInvalido = aniversario.trim() !== '' && parseAniversario(aniversario) === null;
   const valido =
     nome.trim().length > 2 &&
     cpf.replace(/\D/g, '').length === 11 &&
-    telefone.replace(/\D/g, '').length >= 10;
+    telefone.replace(/\D/g, '').length >= 10 &&
+    !aniversarioInvalido;
 
   async function submit() {
     setEnviando(true);
     try {
-      await onEntrar({ nome, cpf, telefone });
+      await onEntrar({ nome, cpf, telefone, aniversario: aniversario.trim() || undefined });
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } finally {
       setEnviando(false);
@@ -260,8 +331,8 @@ function Cadastro({
         </View>
         <Text style={styles.heroTitulo}>Entre no Clube Amazonas</Text>
         <Text style={styles.heroSub}>
-          É de graça e você ganha {brl(25)} de bônus na hora. A cada nota fiscal
-          escaneada, {loja.cashbackPercentual}% viram cashback para as próximas compras.
+          É de graça. A cada nota fiscal escaneada, {loja.cashbackPercentual}% viram cashback para as
+          próximas compras — e no seu aniversário tem {brl(loja.bonusAniversario.valor)} de bônus.
         </Text>
       </LinearGradient>
 
@@ -281,6 +352,18 @@ function Cadastro({
           placeholder="(66) 90000-0000"
           keyboardType="phone-pad"
         />
+        <Campo
+          label="Aniversário — dia/mês (opcional)"
+          valor={aniversario}
+          onChange={setAniversario}
+          placeholder="15/03"
+          keyboardType="number-pad"
+        />
+        <Text style={aniversarioInvalido ? styles.erroTexto : styles.dicaCampo}>
+          {aniversarioInvalido
+            ? 'Data inválida. Use dia e mês, ex.: 15/03.'
+            : `Serve só pro bônus de aniversário de ${brl(loja.bonusAniversario.valor)}. Depois de salvo não dá pra alterar.`}
+        </Text>
         <Botao
           titulo="Criar meu cartão"
           onPress={submit}
@@ -355,6 +438,9 @@ const styles = StyleSheet.create({
     backgroundColor: colors.card,
   },
   termos: { fontSize: font.sizeXs, color: colors.textSubtle, textAlign: 'center' },
+  dicaCampo: { fontSize: font.sizeXs, color: colors.textSubtle, marginTop: -spacing.xs },
+  erroTexto: { fontSize: font.sizeXs, color: colors.danger, marginTop: -spacing.xs },
+  aniversarioTopo: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
 
   cartao: {
     borderRadius: radius.xl,

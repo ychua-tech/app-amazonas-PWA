@@ -43,7 +43,6 @@ const ofertas = seed.ofertas.map((o) => {
     imagem: '',
     validade: emDias(o.perecivel ? 3 : 6),
   };
-  if (o.precoClube != null) out.precoClube = o.precoClube;
   if (o.relampago) {
     out.relampago = true;
     out.relampagoFim = emHoras(o.perecivel ? 5 : 8);

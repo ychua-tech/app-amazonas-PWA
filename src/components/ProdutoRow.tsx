@@ -44,9 +44,6 @@ export function ProdutoRow({ item }: { item: ItemCompravel }) {
             {porPeso && item.modoVenda === 'peso' ? ' /kg' : ` / ${item.unidade}`}
           </Text>
         </View>
-        {item.precoClube != null && (
-          <Text style={styles.socio}>Sócio {brl(item.precoClube)}</Text>
-        )}
       </View>
 
       {porPeso ? (
@@ -98,7 +95,6 @@ const styles = StyleSheet.create({
   precoRow: { flexDirection: 'row', alignItems: 'baseline' },
   preco: { fontSize: font.sizeMd, fontWeight: font.weightBold, color: colors.text },
   unidade: { fontSize: font.sizeXs, color: colors.textMuted },
-  socio: { fontSize: font.sizeXs, color: colors.primaryDark, fontWeight: font.weightBold },
   addBtn: {
     width: 38,
     height: 38,

@@ -17,10 +17,10 @@ API + painel admin em `server/` (Express, JSON file).
 
 ## Escopo atual (v1)
 
-5 abas: **Ofertas da semana** · **Mercado** (catálogo completo `app/(tabs)/mercado.tsx` — busca + categorias, ~243 produtos) · **Carrinho** ("compre pelo app e receba em casa" — pedido vai pro WhatsApp, sem pagamento online, cashback abate no total) · **Clube Amazonas** (cadastro + escanear QR da nota fiscal → cashback) · **Avisos**.
+5 abas: **Ofertas da semana** · **Mercado** (catálogo completo `app/(tabs)/mercado.tsx` — busca + categorias, ~243 produtos) · **Carrinho** ("compre pelo app e receba em casa" — pedido vai pro WhatsApp, sem pagamento online, cashback abate no total; entrega grátis a partir de R$ 100, senão taxa de R$ 10; Pix só depois da loja confirmar) · **Clube Amazonas** (cadastro + escanear QR da nota fiscal → cashback; **sem** bônus de boas-vindas e **sem** preço de sócio; único bônus: aniversário R$ 10 em compras a partir de R$ 200, só no dia, 1x/ano) · **Avisos**.
 Extras: encarte (`app/encarte.tsx`), aviso de abertura (`AvisoModal`), acompanhamento de pedido (`app/pedido/[id].tsx`).
 
-**Área de admin** (`app/admin/`, só a dona): acesso escondido por pressão longa (~800ms) no logo da aba Ofertas. Login com `ADMIN_TOKEN` (validado em `GET /admin/ping`) + PIN opcional de 4 dígitos, guardados no `expo-secure-store` (`src/context/AdminContext.tsx`, `src/lib/cofre.ts`). Telas: preços do catálogo (`precos.tsx`, salva em lote via `POST /admin/produtos/precos` e chama `useCatalogo().refresh()`), ofertas, aviso e pedidos. Chamadas autenticadas via `useAdmin().req()` → `src/api/admin.ts`.
+**Área de admin**: o admin oficial é o painel web (`server/public/admin.html`). As telas dentro do app (`app/admin/`, só a dona) ficaram sem atalho — o acesso pela logo foi removido. Login com `ADMIN_TOKEN` (validado em `GET /admin/ping`) + PIN opcional de 4 dígitos, guardados no `expo-secure-store` (`src/context/AdminContext.tsx`, `src/lib/cofre.ts`). Telas: preços do catálogo (`precos.tsx`, salva em lote via `POST /admin/produtos/precos` e chama `useCatalogo().refresh()`), ofertas, aviso e pedidos. Chamadas autenticadas via `useAdmin().req()` → `src/api/admin.ts`.
 
 ## Venda por peso
 

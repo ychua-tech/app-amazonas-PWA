@@ -39,8 +39,6 @@ export interface Produto {
   unidade: string;
   /** preço de venda (por unidade OU por kg, conforme modoVenda) */
   preco: number;
-  /** preço para sócio do Clube (opcional) */
-  precoClube?: number;
   imagem?: string | number;
   modoVenda: ModoVenda;
   /** modo peso: pesos sugeridos em kg (ex.: [0.3, 0.5, 1, 1.5, 2]) */
@@ -60,8 +58,6 @@ export interface Oferta {
   categoria: Categoria;
   precoNormal: number;
   precoOferta: number;
-  /** Preço exclusivo para sócios do Clube Amazonas (opcional) */
-  precoClube?: number;
   unidade: string; // ex: "kg", "un", "pacote 1kg"
   imagem?: string | number; // URL (API) ou asset via require(); vazio = placeholder por categoria
   validade: string; // ISO date — fim da oferta
@@ -83,7 +79,6 @@ export interface ItemCompravel {
   /** preço vigente por unidade de venda (un ou kg) */
   preco: number;
   precoNormal?: number;
-  precoClube?: number;
   imagem?: string | number;
   modoVenda: ModoVenda;
   pesosSugeridos?: number[];

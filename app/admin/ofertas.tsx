@@ -40,7 +40,6 @@ type Form = {
   unidade: string;
   precoNormal: string;
   precoOferta: string;
-  precoClube: string;
   imagem: string;
   validadeDias: string;
   relampago: boolean;
@@ -54,7 +53,6 @@ const VAZIO: Form = {
   unidade: 'un',
   precoNormal: '',
   precoOferta: '',
-  precoClube: '',
   imagem: '',
   validadeDias: '7',
   relampago: false,
@@ -103,7 +101,6 @@ export default function AdminOfertas() {
       unidade: o.unidade ?? 'un',
       precoNormal: money(o.precoNormal),
       precoOferta: money(o.precoOferta),
-      precoClube: money(o.precoClube),
       imagem: typeof o.imagem === 'string' ? o.imagem : '',
       validadeDias: '7',
       relampago: !!o.relampago,
@@ -126,7 +123,6 @@ export default function AdminOfertas() {
       unidade: form.unidade.trim() || 'un',
       precoNormal,
       precoOferta,
-      precoClube: paraNumero(form.precoClube) ?? '',
       imagem: form.imagem.trim(),
       validade: emDias(Number(form.validadeDias) || 7),
       relampago: form.relampago,
@@ -232,7 +228,6 @@ export default function AdminOfertas() {
         <Campo rotulo="Preço normal" value={form.precoNormal} onChangeText={(t) => set('precoNormal', t)} keyboardType="decimal-pad" placeholder="74,90" style={{ flex: 1 }} />
         <Campo rotulo="Preço oferta" value={form.precoOferta} onChangeText={(t) => set('precoOferta', t)} keyboardType="decimal-pad" placeholder="59,90" style={{ flex: 1 }} />
       </View>
-      <Campo rotulo="Preço sócio (opcional)" value={form.precoClube} onChangeText={(t) => set('precoClube', t)} keyboardType="decimal-pad" placeholder="54,90" />
       {desconto != null && <Text style={styles.desconto}>Desconto de {desconto}%</Text>}
 
       <Campo rotulo="URL da imagem (opcional)" value={form.imagem} onChangeText={(t) => set('imagem', t)} placeholder="https://..." autoCapitalize="none" />
@@ -279,7 +274,6 @@ export default function AdminOfertas() {
               <Text style={styles.cardPreco}>
                 {brl(o.precoOferta)}{' '}
                 <Text style={styles.cardAntigo}>{brl(o.precoNormal)}</Text>
-                {o.precoClube != null ? `  · sócio ${brl(o.precoClube)}` : ''}
               </Text>
               <Text style={styles.dica}>{o.categoria}</Text>
             </View>

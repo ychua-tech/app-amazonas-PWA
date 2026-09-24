@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Clipboard from 'expo-clipboard';
 import * as Haptics from 'expo-haptics';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -134,11 +135,13 @@ export default function PedidoScreen() {
             <Text style={styles.topoDica}>
               {pedido.status === 'aguardando'
                 ? 'Assim que o mercado confirmar pelo WhatsApp, você acompanha tudo por aqui.'
-                : pedido.status === 'saiu_entrega'
-                  ? 'Seu pedido está a caminho. Deixe o telefone por perto.'
-                  : pedido.status === 'entregue'
-                    ? 'Pedido entregue. Bom apetite!'
-                    : 'Acompanhe o preparo em tempo real.'}
+                : pedido.status === 'aceito' && pedido.pix
+                  ? 'Pedido confirmado! Faça o Pix abaixo e envie o comprovante no WhatsApp pra gente começar a separar.'
+                  : pedido.status === 'saiu_entrega'
+                    ? 'Seu pedido está a caminho. Deixe o telefone por perto.'
+                    : pedido.status === 'entregue'
+                      ? 'Pedido entregue. Bom apetite!'
+                      : 'Acompanhe o preparo em tempo real.'}
             </Text>
           )}
         </View>
@@ -188,6 +191,8 @@ export default function PedidoScreen() {
           </View>
         )}
 
+        {pedido.pix && pedido.status === 'aceito' && <PixCard pedido={pedido} />}
+
         {pedido.demo && !statusFinal(pedido.status) && (
           <Botao
             titulo="▶ Avançar status (demonstração)"
@@ -218,20 +223,41 @@ export default function PedidoScreen() {
               </View>
             );
           })}
-          {pedido.cashbackUsado ? (
+          {pedido.cashbackUsado || pedido.bonusAniversario || pedido.taxaEntrega !== undefined ? (
             <>
               <View style={styles.itemLinha}>
                 <Text style={styles.itemNome}>Subtotal</Text>
                 <Text style={styles.itemValor}>{brl(pedido.subtotal)}</Text>
               </View>
-              <View style={styles.itemLinha}>
-                <Text style={[styles.itemNome, { color: colors.cashback }]}>
-                  Cashback do Clube
-                </Text>
-                <Text style={[styles.itemValor, { color: colors.cashback, fontWeight: font.weightBold }]}>
-                  - {brl(pedido.cashbackUsado)}
-                </Text>
-              </View>
+              {pedido.taxaEntrega !== undefined && (
+                <View style={styles.itemLinha}>
+                  <Text style={styles.itemNome}>Taxa de entrega</Text>
+                  <Text
+                    style={[
+                      styles.itemValor,
+                      pedido.taxaEntrega === 0 && { color: colors.success, fontWeight: font.weightBold },
+                    ]}
+                  >
+                    {pedido.taxaEntrega > 0 ? brl(pedido.taxaEntrega) : 'Grátis'}
+                  </Text>
+                </View>
+              )}
+              {pedido.cashbackUsado ? (
+                <View style={styles.itemLinha}>
+                  <Text style={[styles.itemNome, { color: colors.cashback }]}>Cashback do Clube</Text>
+                  <Text style={[styles.itemValor, { color: colors.cashback, fontWeight: font.weightBold }]}>
+                    - {brl(pedido.cashbackUsado)}
+                  </Text>
+                </View>
+              ) : null}
+              {pedido.bonusAniversario ? (
+                <View style={styles.itemLinha}>
+                  <Text style={[styles.itemNome, { color: colors.cashback }]}>Bônus de aniversário</Text>
+                  <Text style={[styles.itemValor, { color: colors.cashback, fontWeight: font.weightBold }]}>
+                    - {brl(pedido.bonusAniversario)}
+                  </Text>
+                </View>
+              ) : null}
             </>
           ) : null}
           <View style={[styles.itemLinha, styles.totalLinha]}>
@@ -240,9 +266,11 @@ export default function PedidoScreen() {
               {brl(pedido.total ?? pedido.subtotal)}
             </Text>
           </View>
-          <Text style={styles.obs}>
-            Taxa de entrega combinada no WhatsApp.
-          </Text>
+          {pedido.itens.some((it) => it.modo === 'peso') && (
+            <Text style={styles.obs}>
+              Itens por peso têm valor estimado — o total é ajustado pelo peso real na separação.
+            </Text>
+          )}
         </View>
 
         <View style={styles.card}>
@@ -284,6 +312,56 @@ export default function PedidoScreen() {
         </Pressable>
       </ScrollView>
     </>
+  );
+}
+
+/** Pedido Pix confirmado pela loja: chave, valor e envio do comprovante no WhatsApp. */
+function PixCard({ pedido }: { pedido: Pedido }) {
+  const pix = pedido.pix!;
+  const [copiado, setCopiado] = useState(false);
+
+  async function copiar() {
+    try {
+      await Clipboard.setStringAsync(pix.chave);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 2500);
+    } catch {
+      // sem acesso à área de transferência — a chave continua selecionável na tela
+    }
+  }
+
+  return (
+    <View style={styles.pixCard}>
+      <View style={styles.pixTopo}>
+        <Ionicons name="qr-code-outline" size={22} color={colors.primaryDark} />
+        <Text style={styles.pixTitulo}>Faça o Pix pra gente começar a separar</Text>
+      </View>
+      <Text style={styles.pixLabel}>Valor</Text>
+      <Text style={styles.pixValor}>{brl(pix.valor)}</Text>
+      <Text style={styles.pixLabel}>Chave Pix ({pix.tipoChave})</Text>
+      <Text selectable style={styles.pixChave}>
+        {pix.chaveFormatada}
+      </Text>
+      <Text style={styles.pixFavorecido}>{pix.favorecido}</Text>
+      <Botao titulo={copiado ? 'Chave copiada ✓' : 'Copiar chave Pix'} variante="outline" onPress={copiar} />
+      <Pressable
+        style={styles.whats}
+        onPress={() =>
+          abrirWhatsApp(
+            loja.whatsappPedidos,
+            `Olá! Segue o comprovante do Pix do pedido *${pedido.codigo}* (${brl(pix.valor)}).`,
+          )
+        }
+      >
+        <Ionicons name="logo-whatsapp" size={20} color={colors.onPrimary} />
+        <Text style={styles.whatsTexto}>Enviar comprovante no WhatsApp</Text>
+      </Pressable>
+      <Text style={styles.pixObs}>
+        Depois de pagar, anexe o comprovante na conversa. Assim que recebermos, começamos a separar
+        o seu pedido.
+      </Text>
+    </View>
   );
 }
 
@@ -338,6 +416,22 @@ const styles = StyleSheet.create({
   obs: { fontSize: font.sizeXs, color: colors.textMuted, marginTop: spacing.xs },
   entregaTexto: { fontSize: font.sizeSm, color: colors.text },
   entregaMuted: { fontSize: font.sizeXs, color: colors.textMuted },
+
+  pixCard: {
+    backgroundColor: colors.accentSoft,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    borderRadius: radius.lg,
+    padding: spacing.lg,
+    gap: spacing.sm,
+  },
+  pixTopo: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+  pixTitulo: { flex: 1, fontSize: font.sizeMd, fontWeight: font.weightBold, color: colors.primaryDark },
+  pixLabel: { fontSize: font.sizeXs, color: colors.textMuted, marginTop: spacing.xs },
+  pixValor: { fontSize: font.sizeXl, fontWeight: font.weightBold, color: colors.text },
+  pixChave: { fontSize: font.sizeLg, fontWeight: font.weightBold, color: colors.text, letterSpacing: 0.5 },
+  pixFavorecido: { fontSize: font.sizeXs, color: colors.textMuted, marginBottom: spacing.xs },
+  pixObs: { fontSize: font.sizeXs, color: colors.textMuted, lineHeight: 17 },
 
   whats: {
     flexDirection: 'row',

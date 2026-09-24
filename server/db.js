@@ -8,7 +8,7 @@ const SEED_FILE = join(__dirname, 'db.seed.json');
 
 const SEED = {
   ofertas: [],
-  produtos: [], // catálogo do mercado — { id, nome, categoria, unidade, preco, precoClube?, atualizadoEm, historicoPreco }
+  produtos: [], // catálogo do mercado — { id, nome, categoria, unidade, preco, atualizadoEm, historicoPreco }
   dispositivos: [], // { token, plataforma, criadoEm }
   aviso: null, // Aviso de abertura do app (ver POST /admin/aviso)
   pedidos: [], // pedidos feitos pelo app (ver POST /pedidos)
