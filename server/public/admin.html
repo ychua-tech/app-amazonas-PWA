@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
 <title>Painel • Supermercado Amazonas</title>
 <style>
   :root{
@@ -17,7 +18,11 @@
     align-items:center;gap:10px}
   header b{font-size:20px;font-weight:800}
   header span{opacity:.9;font-size:13px}
+  header button{margin-left:auto;background:transparent;border:1.5px solid #fff;color:#fff;padding:6px 14px}
+  header button:hover{background:rgba(255,255,255,.18)}
   main{max-width:920px;margin:0 auto;padding:20px;display:grid;gap:20px}
+  #areaAdmin{display:grid;gap:20px}
+  #areaAdmin[hidden]{display:none}
   .card{background:#fff;border:1px solid var(--borda);border-radius:14px;padding:18px}
   h2{margin:0 0 12px;font-size:17px}
   label{display:block;font-size:13px;font-weight:600;margin:10px 0 4px}
@@ -25,24 +30,17 @@
     border-radius:9px;font:inherit;background:#fff;color:var(--texto)}
   textarea{min-height:60px;resize:vertical}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
   button{background:var(--laranja);color:#fff;border:0;border-radius:9px;
     padding:11px 16px;font:inherit;font-weight:700;cursor:pointer}
   button:hover{background:var(--laranja-escuro)}
+  button:disabled{opacity:.5;cursor:default}
   button.sec{background:transparent;color:var(--laranja);border:1.5px solid var(--laranja)}
   button.mini{padding:6px 10px;font-size:13px}
   button.perigo{background:var(--perigo)}
   .lista{display:grid;gap:10px}
-  .oferta{display:flex;gap:12px;align-items:center;border:1px solid var(--borda);
-    border-radius:11px;padding:10px}
-  .oferta img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--surface)}
-  .oferta .info{flex:1;min-width:0}
-  .oferta .nome{font-weight:700}
-  .oferta .preco{color:var(--laranja);font-weight:700}
-  .oferta .antigo{color:var(--muted);text-decoration:line-through;font-size:13px;margin-left:6px}
   .tag{display:inline-block;background:var(--laranja-suave);color:var(--laranja-escuro);
     font-size:11px;font-weight:700;padding:2px 7px;border-radius:99px;margin-left:6px}
-  .tag.rel{background:var(--laranja-escuro);color:#fff}
+  .tag.rel{background:var(--laranja-escuro);color:#fff;margin-left:0}
   .tag.novo{background:var(--sucesso);color:#fff}
   #areaAdmin > .card > h2{cursor:pointer;user-select:none;display:flex;align-items:center;gap:2px}
   #areaAdmin > .card > h2::after{content:'▾';margin-left:auto;color:var(--muted);font-size:13px;
@@ -55,6 +53,7 @@
   .tokenbar{display:flex;gap:8px;align-items:end}
   .tokenbar > div{flex:1}
   small{color:var(--muted)}
+  .link{color:var(--laranja-escuro);font-weight:700;font-size:12px;margin-left:6px}
   .pedido{border:1px solid var(--borda);border-radius:11px;padding:12px}
   .pedido .topo{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
   .pedido .cod{font-weight:800}
@@ -68,19 +67,28 @@
   .status.saiu_entrega{background:#dbeafe;color:#1e40af}
   .status.entregue{background:#e5e7eb;color:#374151}
   .status.cancelado{background:#fde8e7;color:var(--perigo)}
-  .preco-item{display:flex;gap:10px;align-items:center;border:1px solid var(--borda);
+  /* lista de produtos por seção */
+  #precosLista{max-height:65vh;overflow:auto}
+  .secao{border:1px solid var(--borda);border-radius:11px;overflow:hidden}
+  .secao-head{display:flex;align-items:center;gap:6px;padding:10px 12px;cursor:pointer;
+    user-select:none;background:var(--surface)}
+  .secao-head::after{content:'▾';margin-left:auto;color:var(--muted);font-size:13px;transition:transform .15s}
+  .secao:not(.aberta) .secao-head::after{transform:rotate(-90deg)}
+  .secao.tem-mudanca .secao-head b::after{content:' ● alterado';color:var(--laranja);font-size:11px;font-weight:700}
+  .secao-corpo{display:none;gap:8px;padding:8px}
+  .secao.aberta .secao-corpo{display:grid}
+  .preco-item{display:flex;gap:10px;align-items:center;flex-wrap:wrap;border:1px solid var(--borda);
     border-radius:11px;padding:8px 10px}
   .preco-item.mudou{border-color:var(--laranja);background:var(--laranja-suave)}
-  .preco-item .info{flex:1;min-width:0}
-  .preco-item .nome{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .preco-item .info{flex:1;min-width:180px}
+  .preco-item .nome{font-weight:700;font-size:14px}
+  .preco-item .marca{font-weight:400;color:var(--muted)}
   .preco-item .meta{color:var(--muted);font-size:12px}
   .preco-item .campo{display:flex;align-items:center;gap:3px;border:1px solid var(--borda);
     border-radius:8px;padding:4px 7px;background:#fff}
-  .preco-item .campo.socio{border-style:dashed}
   .preco-item .campo span{font-size:11px;color:var(--muted);font-weight:700}
-  .preco-item .campo input{width:64px;border:0;padding:2px 0;font-weight:700;text-align:right}
+  .preco-item .campo input{width:72px;border:0;padding:2px 0;font-weight:700;text-align:right}
   .preco-item .campo input:focus{outline:0}
-  .preco-item{flex-wrap:wrap}
   .preco-item .acoes{display:flex;gap:6px}
   .preco-item .acoes button{padding:8px 10px;line-height:1}
 </style>
@@ -88,20 +96,19 @@
 <body>
 <header>
   <b>♥ Amazonas</b><span>Painel de ofertas</span>
+  <button id="btnSair" onclick="sair()" hidden>Sair</button>
 </header>
 
 <main>
-  <div class="card">
+  <div class="card" id="cardAcesso">
     <h2>Acesso</h2>
     <div class="tokenbar">
       <div>
-        <label>Token de administrador</label>
-        <input id="token" type="password" placeholder="cole o token aqui" />
+        <label for="token">Token de administrador</label>
+        <input id="token" type="password" autocomplete="new-password" placeholder="cole o token aqui" />
       </div>
-      <button onclick="salvarToken()">Entrar</button>
-      <button id="btnSair" class="sec" onclick="sair()" style="display:none">Sair</button>
+      <button id="btnEntrar" onclick="entrar()">Entrar</button>
     </div>
-    <small>Definido no servidor pela variável <code>ADMIN_TOKEN</code>.</small>
     <div id="tokenAviso"></div>
   </div>
 
@@ -109,26 +116,14 @@
   <div class="card" id="cardPedidos">
     <h2>Pedidos <span id="pedidosNovoBadge" class="tag novo" style="display:none"></span> <span id="pedidosBadge" class="tag" style="display:none"></span></h2>
     <small>Atualiza sozinho a cada 15s. Ao mudar o status, o cliente recebe uma notificação e acompanha no app.</small>
-    <div id="pedidos" class="lista" style="margin-top:12px"><small>Entre com o token para ver.</small></div>
+    <div id="pedidos" class="lista" style="margin-top:12px"><small>Nenhum pedido ainda.</small></div>
   </div>
 
   <div class="card" id="cardPrecos">
     <h2>Preços do catálogo <span id="precosBadge" class="tag" style="display:none"></span></h2>
-    <small>Mesmos preços que a área de admin do app. Edite o valor e clique em salvar — o app recebe na próxima abertura.</small>
-    <div class="row" style="margin-top:12px">
-      <div><input id="p_busca" placeholder="Buscar produto ou marca" /></div>
-      <div>
-        <select id="p_categoria">
-          <option value="">Todas as categorias</option>
-          <option>Hortifruti</option><option>Açougue</option><option>Padaria</option>
-          <option>Frios e Laticínios</option><option>Mercearia</option><option>Bebidas</option>
-          <option>Limpeza</option><option>Higiene</option><option>Pet</option>
-        </select>
-      </div>
-    </div>
-    <div id="precosLista" class="lista" style="margin-top:14px;max-height:480px;overflow:auto">
-      <small>Entre com o token para ver.</small>
-    </div>
+    <small>Abra uma seção, edite o valor e clique em salvar — o app recebe na próxima abertura. ⚡ cria uma promoção do produto; 🗑️ tira ele do catálogo.</small>
+    <div style="margin-top:12px"><input id="p_busca" placeholder="Buscar produto ou marca" autocomplete="off" /></div>
+    <div id="precosLista" class="lista" style="margin-top:14px"></div>
     <div style="display:flex;gap:10px;margin-top:14px;align-items:center">
       <button id="p_salvar" onclick="salvarPrecos()" disabled>Salvar preços</button>
       <button class="sec" onclick="carregarPrecos()">Recarregar</button>
@@ -138,39 +133,16 @@
 
   <div class="card" id="cardOferta">
     <h2 id="formTitulo">Nova oferta</h2>
-    <input type="hidden" id="f_id" />
-    <label>Nome do produto *</label>
-    <input id="f_nome" placeholder="Ex: Picanha Bovina Resfriada" />
-    <label>Descrição</label>
-    <textarea id="f_descricao" placeholder="Detalhe curto que aparece no app"></textarea>
-    <div class="row3">
-      <div>
-        <label>Categoria</label>
-        <select id="f_categoria">
-          <option>Hortifruti</option><option>Açougue</option><option>Padaria</option>
-          <option>Mercearia</option><option>Bebidas</option>
-          <option>Frios e Laticínios</option><option>Limpeza</option>
-          <option>Higiene</option><option>Pet</option>
-        </select>
-      </div>
-      <div><label>Unidade</label><input id="f_unidade" placeholder="kg, un, pacote 1kg" /></div>
-      <div><label>Validade da oferta</label><input id="f_validade" type="date" /></div>
+    <label for="f_nome">Nome do produto *</label>
+    <input id="f_nome" list="listaProdutos" placeholder="Digite para buscar no catálogo" autocomplete="off" />
+    <datalist id="listaProdutos"></datalist>
+    <small id="f_dica"></small>
+    <div class="row">
+      <div><label for="f_precoNormal">Preço normal *</label><input id="f_precoNormal" inputmode="decimal" placeholder="preenche sozinho" autocomplete="off" /></div>
+      <div><label for="f_precoOferta">Preço da promoção *</label><input id="f_precoOferta" inputmode="decimal" placeholder="Ex: 59,90" autocomplete="off" /></div>
     </div>
-    <div class="row3">
-      <div><label>Preço normal *</label><input id="f_precoNormal" type="number" step="0.01" placeholder="74.90" /></div>
-      <div><label>Preço oferta *</label><input id="f_precoOferta" type="number" step="0.01" placeholder="59.90" /></div>
-      <div><label>Preço sócio (opcional)</label><input id="f_precoClube" type="number" step="0.01" placeholder="54.90" /></div>
-    </div>
-    <label>URL da imagem</label>
-    <input id="f_imagem" placeholder="https://... (deixe em branco para usar imagem padrão)" />
-    <label style="display:flex;align-items:center;gap:8px;margin-top:14px">
-      <input type="checkbox" id="f_relampago" style="width:auto" />
-      É oferta relâmpago
-    </label>
-    <div id="relampagoCampos" style="display:none">
-      <label>Relâmpago termina em</label>
-      <input id="f_relampagoFim" type="datetime-local" />
-    </div>
+    <label for="f_validade">Data da oferta (vale até) *</label>
+    <input id="f_validade" type="date" />
     <div style="display:flex;gap:10px;margin-top:16px">
       <button onclick="salvarOferta()">Salvar oferta</button>
       <button class="sec" onclick="limparForm()">Limpar</button>
@@ -180,60 +152,67 @@
 
   <div class="card" id="cardAviso">
     <h2>Aviso de abertura do app</h2>
-    <small>Aparece uma vez por dia quando o cliente abre o app. Deixe o título vazio e salve para desativar.</small>
-    <label style="display:flex;align-items:center;gap:8px;margin-top:10px">
-      <input type="checkbox" id="a_ativo" style="width:auto" checked /> Ativo
-    </label>
-    <label>Título</label>
-    <input id="a_titulo" placeholder="Feriado da Independência" />
-    <label>Subtítulo</label>
-    <input id="a_subtitulo" placeholder="Neste feriado vamos trabalhar com horário especial" />
-    <label>Linhas (uma por linha)</label>
-    <textarea id="a_linhas" placeholder="Segunda-feira, 07/09"></textarea>
-    <label>Destaque (texto grande)</label>
-    <input id="a_destaque" placeholder="DAS 6H ÀS 12H" />
-    <label>Rodapé</label>
-    <input id="a_rodape" placeholder="Antecipe as compras ou peça pelo televendas." />
-    <div class="row">
-      <div><label>Televendas (só números, com DDD)</label><input id="a_telefone" placeholder="556635662298" /></div>
-      <div><label>Expira em</label><input id="a_expira" type="date" /></div>
+    <small>Aparece pro cliente quando ele abre o app (uma vez por dia) até acabar a duração escolhida.</small>
+    <div id="avisoStatus" style="margin-top:8px;font-size:13px;font-weight:600"></div>
+    <label for="a_titulo">Título *</label>
+    <input id="a_titulo" placeholder="Feriado da Independência" autocomplete="off" />
+    <label for="a_descricao">Descrição</label>
+    <textarea id="a_descricao" placeholder="Neste feriado vamos funcionar das 6h às 12h."></textarea>
+    <label for="a_duracao">Duração</label>
+    <select id="a_duracao">
+      <option value="24">24 horas</option>
+      <option value="48">48 horas</option>
+      <option value="72">72 horas</option>
+      <option value="168">7 dias</option>
+    </select>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button onclick="salvarAviso()">Salvar aviso</button>
+      <button class="sec" onclick="desativarAviso()">Desativar aviso</button>
     </div>
-    <div style="margin-top:14px"><button onclick="salvarAviso()">Salvar aviso</button></div>
     <div id="avisoAviso"></div>
   </div>
 
   <div class="card" id="cardRelampago">
     <h2>Disparar oferta relâmpago (push)</h2>
     <small>Envia notificação para todos os aparelhos com o app instalado.</small>
-    <label>Oferta relacionada (opcional)</label>
+    <label for="r_ofertaId">Oferta relacionada (opcional)</label>
     <select id="r_ofertaId"><option value="">— nenhuma —</option></select>
-    <label>Título</label>
-    <input id="r_titulo" placeholder="Refrigerante Cola 2L" />
-    <label>Mensagem</label>
-    <input id="r_mensagem" placeholder="Leve 3 e pague 2 — só nas próximas 2 horas!" />
+    <label for="r_preco">Preço (R$)</label>
+    <input id="r_preco" inputmode="decimal" placeholder="Ex: 7,99" autocomplete="off" />
+    <label for="r_mensagem">Mensagem</label>
+    <input id="r_mensagem" placeholder="Leve 3 e pague 2 — só nas próximas 2 horas!" autocomplete="off" />
     <div style="margin-top:14px">
       <button class="perigo" onclick="dispararRelampago()">⚡ Enviar agora</button>
     </div>
     <div id="pushAviso"></div>
-  </div>
-
-  <div class="card" id="cardListaOfertas">
-    <h2>Ofertas publicadas</h2>
-    <div id="lista" class="lista"><small>Entre com o token para ver.</small></div>
   </div>
   </div>
 </main>
 
 <script>
 const API = location.origin;
-const tokenNaUrl = new URLSearchParams(location.search).get('token');
-let TOKEN = tokenNaUrl || localStorage.getItem('amz_admin_token') || '';
-if (tokenNaUrl) localStorage.setItem('amz_admin_token', tokenNaUrl);
+// O token vive só na memória desta aba: nunca vai pro navegador (localStorage/URL) e some
+// ao recarregar a página ou clicar em "Sair".
+let TOKEN = '';
+try{ localStorage.removeItem('amz_admin_token'); }catch{}   // versões antigas do painel guardavam aqui
+if(new URLSearchParams(location.search).has('token')) history.replaceState(null, '', location.pathname);
+
+const CATEGORIAS = ['Hortifruti','Açougue','Padaria','Frios e Laticínios','Mercearia','Bebidas','Limpeza','Higiene','Pet'];
 
 function h(id){ return document.getElementById(id); }
-function aviso(el, msg, tipo){ el.innerHTML = `<div class="aviso ${tipo}">${msg}</div>`;
+// escapa texto antes de ir pro innerHTML (nome/endereço/observação de cliente não podem virar HTML)
+function esc(s){ return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function aviso(el, msg, tipo){ el.innerHTML = `<div class="aviso ${tipo}">${esc(msg)}</div>`;
   setTimeout(()=>{ el.innerHTML=''; }, 4000); }
 function brl(v){ return (v ?? 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+const semAcento = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+function paraNum(txt){
+  const n = Number(String(txt ?? '').replace(',', '.').trim());
+  return Number.isFinite(n) && n > 0 ? Math.round(n*100)/100 : null;
+}
+const moeda = n => (n==null ? '' : String(n).replace('.', ','));
+const dataCurta = iso => new Date(iso).toLocaleDateString('pt-BR');
+const dataHoraCurta = iso => new Date(iso).toLocaleString('pt-BR', {day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 
 async function req(path, opts={}){
   const r = await fetch(API + path, {
@@ -244,33 +223,42 @@ async function req(path, opts={}){
   return r.json();
 }
 
-function salvarToken(){
-  TOKEN = h('token').value.trim();
-  localStorage.setItem('amz_admin_token', TOKEN);
-  carregar();
+// ---------- Acesso ----------
+async function entrar(){
+  const digitado = h('token').value.trim();
+  if(!digitado){ aviso(h('tokenAviso'), 'Digite o token.', 'err'); return; }
+  TOKEN = digitado;
+  h('btnEntrar').disabled = true;
+  const ok = await carregarTudo();
+  h('btnEntrar').disabled = false;
+  if(ok) h('token').value = '';   // a senha some do campo
+  else TOKEN = '';
 }
+h('token').addEventListener('keydown', e=>{ if(e.key === 'Enter') entrar(); });
 
 function mostrarArea(mostrar){
   h('areaAdmin').hidden = !mostrar;
-  h('btnSair').style.display = mostrar ? 'inline-block' : 'none';
+  h('cardAcesso').hidden = mostrar;   // logado: some a parte do token
+  h('btnSair').hidden = !mostrar;
 }
 
 function sair(){
   TOKEN = '';
-  localStorage.removeItem('amz_admin_token');
   h('token').value = '';
-  mostrarArea(false);
   if(window._pedidosTimer){ clearInterval(window._pedidosTimer); window._pedidosTimer = null; }
+  PEDIDOS = []; PRODUTOS = []; OFERTAS = [];
+  for(const k in EDICOES) delete EDICOES[k];
+  mostrarArea(false);
   aviso(h('tokenAviso'), 'Você saiu.', 'ok');
 }
 
-h('f_relampago').addEventListener('change', e=>{
-  h('relampagoCampos').style.display = e.target.checked ? 'block' : 'none';
-});
-// não deixa escolher uma validade que já passou
-{
-  const hoje = new Date();
-  h('f_validade').min = `${hoje.getFullYear()}-${String(hoje.getMonth()+1).padStart(2,'0')}-${String(hoje.getDate()).padStart(2,'0')}`;
+async function carregarTudo(){
+  try{ await req('/admin/ping'); }
+  catch(e){ mostrarArea(false); aviso(h('tokenAviso'), e.message, 'err'); return false; }
+  mostrarArea(true);
+  await Promise.all([carregarOfertas(), carregarPrecos(), carregarAviso(), carregarPedidos()]);
+  if(!window._pedidosTimer) window._pedidosTimer = setInterval(carregarPedidos, 15000);
+  return true;
 }
 
 // ---------- Cards retráteis (clica no título pra abrir/fechar, lembra o estado) ----------
@@ -285,26 +273,13 @@ document.querySelectorAll('#areaAdmin > .card').forEach(card=>{
     if(!recolhido && card.id === 'cardPedidos') marcarPedidosVistos(PEDIDOS);
   });
 });
-
-async function carregar(){
-  try{
-    const ofertas = await req('/admin/ofertas');
-    mostrarArea(true);
-    aviso(h('tokenAviso'), 'Token ok — '+ofertas.length+' oferta(s).', 'ok');
-    renderLista(ofertas);
-    const sel = h('r_ofertaId');
-    sel.innerHTML = '<option value="">— nenhuma —</option>' +
-      ofertas.map(o=>`<option value="${o.id}">${o.nome}</option>`).join('');
-    carregarAviso();
-    carregarPedidos();
-    carregarPrecos();
-    if(!window._pedidosTimer) window._pedidosTimer = setInterval(carregarPedidos, 15000);
-  }catch(e){
-    mostrarArea(false);
-    aviso(h('tokenAviso'), e.message, 'err');
-  }
+function abrirCard(id){
+  const card = h(id);
+  card.classList.remove('recolhido');
+  localStorage.setItem('amz_card_recolhido_' + id, '0');
 }
 
+// ---------- Pedidos ----------
 const FLUXO = ['aguardando','aceito','separando','saiu_entrega','entregue'];
 const ROTULO_STATUS = {
   aguardando:'Aguardando', aceito:'Aceito', separando:'Separando',
@@ -330,7 +305,7 @@ function avisarWhatsApp(pedido, status){
 
 let PEDIDOS = [];
 
-// ---------- Aviso de pedido novo (bolinha verde no título do card) ----------
+// aviso de pedido novo (bolinha verde no título do card)
 // null = nunca vimos pedidos nessa versão do painel ainda (não alarma com o histórico inteiro)
 function idsPedidosVistos(){
   const bruto = localStorage.getItem('amz_pedidos_vistos');
@@ -378,21 +353,21 @@ async function carregarPedidos(){
     const proximo = idx>=0 && idx < FLUXO.length-1 ? FLUXO[idx+1] : null;
     const fmtPeso = (kg)=> kg<1 ? Math.round(kg*1000)+' g' : kg.toLocaleString('pt-BR')+' kg';
     const itens = p.itens.map(i=> i.modo==='peso'
-      ? `${i.nome} (${i.quantidade>1?i.quantidade+'x ':''}≈${fmtPeso(i.pesoKg||0)})`
-      : `${i.quantidade}x ${i.nome}`).join(', ');
+      ? `${esc(i.nome)} (${i.quantidade>1?esc(i.quantidade)+'x ':''}≈${fmtPeso(i.pesoKg||0)})`
+      : `${esc(i.quantidade)}x ${esc(i.nome)}`).join(', ');
     return `<div class="pedido">
       <div class="topo">
-        <span class="cod">${p.codigo}</span>
-        <span class="status ${p.status}">${ROTULO_STATUS[p.status]||p.status}</span>
+        <span class="cod">${esc(p.codigo)}</span>
+        <span class="status ${esc(p.status)}">${esc(ROTULO_STATUS[p.status]||p.status)}</span>
       </div>
-      <div class="cli">${p.cliente.nome} · ${p.cliente.telefone||''}<br>${p.cliente.endereco||''} ${p.cliente.bairro?'· '+p.cliente.bairro:''}</div>
+      <div class="cli">${esc(p.cliente.nome)} · ${esc(p.cliente.telefone||'')}<br>${esc(p.cliente.endereco||'')} ${p.cliente.bairro?'· '+esc(p.cliente.bairro):''}</div>
       <div class="itens">${itens}<br>
         ${p.cashbackUsado>0?`Subtotal ${brl(p.subtotal)} · Cashback -${brl(p.cashbackUsado)}<br><b>Total ${brl(p.total)}</b>`:`<b>${brl(p.subtotal)}</b>`}
-        · ${p.pagamento||'pagamento a combinar'}${p.trocoPara?' (troco p/ '+p.trocoPara+')':''}</div>
-      ${p.observacao?`<div class="cli">Obs: ${p.observacao}</div>`:''}
+        · ${esc(p.pagamento||'pagamento a combinar')}${p.trocoPara?' (troco p/ '+esc(p.trocoPara)+')':''}</div>
+      ${p.observacao?`<div class="cli">Obs: ${esc(p.observacao)}</div>`:''}
       <div class="acoes">
-        ${proximo?`<button class="mini" onclick="mudarStatus('${p.id}','${proximo}')">▶ ${ROTULO_STATUS[proximo]}</button>`:''}
-        ${!['entregue','cancelado'].includes(p.status)?`<button class="mini perigo" onclick="cancelarPedido('${p.id}')">Cancelar</button>`:''}
+        ${proximo?`<button class="mini" onclick="mudarStatus('${esc(p.id)}','${proximo}')">▶ ${ROTULO_STATUS[proximo]}</button>`:''}
+        ${!['entregue','cancelado'].includes(p.status)?`<button class="mini perigo" onclick="cancelarPedido('${esc(p.id)}')">Cancelar</button>`:''}
       </div>
     </div>`;
   }).join('');
@@ -416,21 +391,51 @@ async function cancelarPedido(id){
   }catch(e){ alert(e.message); }
 }
 
-// ---------- Preços do catálogo ----------
-let PRODUTOS = [];
-const EDICOES = {}; // id -> { preco?:string, precoClube?:string }
-
-const semAcento = s => (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
-function paraNum(txt){
-  const n = Number(String(txt).replace(',', '.').trim());
-  return Number.isFinite(n) && n > 0 ? Math.round(n*100)/100 : null;
+// ---------- Datas (o <input type=date> vira meia-noite UTC se usar new Date(string) direto) ----------
+// No fuso do Brasil isso já é a noite do dia ANTERIOR: uma oferta "válida até hoje" nascia vencida.
+// Por isso a data é montada pelos componentes (ano, mês, dia), no fuso local.
+function dataParaFimDoDiaISO(dataStr){
+  const [y,m,d] = dataStr.split('-').map(Number);
+  return new Date(y, m-1, d, 23,59,59,999).toISOString();
 }
-const moeda = n => (n==null ? '' : String(n).replace('.', ','));
+function isoParaDataLocal(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  const pad = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function daquiADias(n){ const d = new Date(); d.setDate(d.getDate()+n); return isoParaDataLocal(d.toISOString()); }
+
+// ---------- Ofertas (só guarda a lista: aparecem na lista de produtos e no relâmpago) ----------
+let OFERTAS = [];
+const idOferta = idProduto => 'of-' + idProduto;   // 1 promoção por produto: salvar de novo substitui
+function ofertaAtiva(o){
+  const fim = o.relampago && o.relampagoFim ? o.relampagoFim : o.validade;
+  return new Date(fim).getTime() > Date.now();
+}
+
+async function carregarOfertas(){
+  try{ OFERTAS = await req('/admin/ofertas'); }catch{ return; }
+  const ativas = OFERTAS.filter(ofertaAtiva);
+  const sel = h('r_ofertaId');
+  const atual = sel.value;
+  sel.innerHTML = '<option value="">— nenhuma —</option>' +
+    ativas.map(o=>`<option value="${esc(o.id)}">${esc(o.nome)} — ${brl(o.precoOferta)}</option>`).join('');
+  if(ativas.some(o=>o.id===atual)) sel.value = atual;
+  if(PRODUTOS.length) renderPrecos();
+}
+
+// ---------- Preços do catálogo (por seção, tudo fechado, com busca) ----------
+let PRODUTOS = [];
+const EDICOES = {}; // id -> { preco?:string }
+const SECOES_ABERTAS = new Set();
+const nomeCompleto = p => p.nome + (p.marca ? ' ' + p.marca : '');
 
 async function carregarPrecos(){
   try{
     PRODUTOS = await req('/admin/produtos');
     for(const k in EDICOES) delete EDICOES[k];
+    h('listaProdutos').innerHTML = PRODUTOS.map(p=>`<option value="${esc(nomeCompleto(p))}"></option>`).join('');
     renderPrecos();
     atualizarPrecosBadge();
   }catch(e){
@@ -438,73 +443,86 @@ async function carregarPrecos(){
   }
 }
 
-function precosFiltrados(){
-  const termo = semAcento(h('p_busca').value);
-  const cat = h('p_categoria').value;
-  return PRODUTOS.filter(p=>{
-    if(cat && p.categoria !== cat) return false;
-    if(!termo) return true;
-    return semAcento(p.nome).includes(termo) || semAcento(p.marca).includes(termo);
-  });
+function linhaProduto(p, promo, mudados){
+  const e = EDICOES[p.id] || {};
+  const preco = e.preco !== undefined ? e.preco : moeda(p.preco);
+  const tagPromo = promo
+    ? ` · <span class="tag rel">⚡ promoção ${brl(promo.precoOferta)} até ${dataCurta(promo.validade)}</span><a href="#" class="link" onclick="event.preventDefault();encerrarPromocao('${esc(promo.id)}')">encerrar</a>`
+    : '';
+  return `<div class="preco-item${mudados.has(p.id)?' mudou':''}" data-id="${esc(p.id)}">
+    <div class="info">
+      <div class="nome">${esc(p.nome)}${p.marca ? ' · <span class="marca">'+esc(p.marca)+'</span>' : ''}</div>
+      <div class="meta">por ${esc(p.unidade||'un')}${tagPromo}</div>
+    </div>
+    <div class="campo"><span>R$</span><input inputmode="decimal" data-id="${esc(p.id)}" data-campo="preco" value="${esc(preco)}" /></div>
+    <div class="acoes">
+      <button class="mini sec" title="Criar promoção com este produto" onclick="criarOfertaDoProduto('${esc(p.id)}')">⚡</button>
+      <button class="mini perigo" title="Excluir produto do catálogo" onclick="excluirProduto('${esc(p.id)}')">🗑️</button>
+    </div>
+  </div>`;
 }
 
 function renderPrecos(){
-  const lista = precosFiltrados();
-  if(!PRODUTOS.length){ h('precosLista').innerHTML = '<small>Entre com o token para ver.</small>'; return; }
-  if(!lista.length){ h('precosLista').innerHTML = '<small>Nada encontrado.</small>'; return; }
-  h('precosLista').innerHTML = lista.slice(0, 300).map(p=>{
-    const e = EDICOES[p.id] || {};
-    const preco = e.preco !== undefined ? e.preco : moeda(p.preco);
-    const clube = e.precoClube !== undefined ? e.precoClube : moeda(p.precoClube);
-    return `<div class="preco-item" data-id="${p.id}">
-      <div class="info">
-        <div class="nome">${p.nome}${p.marca ? ' · <span style="font-weight:400;color:var(--muted)">'+p.marca+'</span>' : ''}</div>
-        <div class="meta">por ${p.unidade||'un'} · ${p.categoria}</div>
-      </div>
-      <div class="campo"><span>R$</span><input inputmode="decimal" data-id="${p.id}" data-campo="preco" value="${preco}" /></div>
-      <div class="campo socio"><span>♥</span><input inputmode="decimal" data-id="${p.id}" data-campo="precoClube" placeholder="sócio" value="${clube}" /></div>
-      <div class="acoes">
-        <button class="mini sec" title="Criar promoção com este produto" onclick="criarOfertaDoProduto('${p.id}')">⚡</button>
-        <button class="mini perigo" title="Excluir produto do catálogo" onclick="excluirProduto('${p.id}')">🗑️</button>
-      </div>
+  const box = h('precosLista');
+  if(!PRODUTOS.length){ box.innerHTML = '<small>Nenhum produto no catálogo.</small>'; return; }
+  const termo = semAcento(h('p_busca').value.trim());
+  const buscando = termo !== '';
+  const promos = new Map(OFERTAS.filter(ofertaAtiva).map(o=>[o.id, o]));
+  const mudados = new Set(precosPendentes().map(x=>x.id));
+  const grupos = new Map();
+  for(const p of PRODUTOS){
+    if(buscando && !(semAcento(p.nome).includes(termo) || semAcento(p.marca).includes(termo))) continue;
+    if(!grupos.has(p.categoria)) grupos.set(p.categoria, []);
+    grupos.get(p.categoria).push(p);
+  }
+  if(!grupos.size){ box.innerHTML = '<small>Nada encontrado.</small>'; return; }
+  const ordem = [...CATEGORIAS.filter(c=>grupos.has(c)), ...[...grupos.keys()].filter(c=>!CATEGORIAS.includes(c))];
+  box.innerHTML = ordem.map(cat=>{
+    const itens = grupos.get(cat);
+    const aberta = buscando || SECOES_ABERTAS.has(cat);   // buscando: abre as seções com resultado
+    return `<div class="secao${aberta?' aberta':''}" data-cat="${esc(cat)}">
+      <div class="secao-head"><b>${esc(cat)}</b><span class="tag">${itens.length}</span></div>
+      <div class="secao-corpo">${itens.map(p=>linhaProduto(p, promos.get(idOferta(p.id)), mudados)).join('')}</div>
     </div>`;
   }).join('');
-  h('precosLista').querySelectorAll('input[data-campo]').forEach(inp=>{
-    inp.addEventListener('input', ()=>{
-      const { id, campo } = inp.dataset;
-      (EDICOES[id] = EDICOES[id] || {})[campo] = inp.value;
-      const item = h('precosLista').querySelector(`.preco-item[data-id="${id}"]`);
-      if(item) item.classList.toggle('mudou', linhaMudou(id));
-      atualizarPrecosBadge();
-    });
-  });
+  marcarSecoesAlteradas();
 }
 
-/** Produtos com alteração válida → payload [{ id, preco?, precoClube? }]. */
+// abrir/fechar seção e digitar preço (delegado: vale mesmo depois de redesenhar a lista)
+h('precosLista').addEventListener('click', e=>{
+  const head = e.target.closest('.secao-head');
+  if(!head || h('p_busca').value.trim()) return;
+  const sec = head.parentElement;
+  const cat = sec.dataset.cat;
+  if(SECOES_ABERTAS.has(cat)) SECOES_ABERTAS.delete(cat); else SECOES_ABERTAS.add(cat);
+  sec.classList.toggle('aberta');
+});
+h('precosLista').addEventListener('input', e=>{
+  const inp = e.target.closest('input[data-campo]');
+  if(!inp) return;
+  const { id, campo } = inp.dataset;
+  (EDICOES[id] = EDICOES[id] || {})[campo] = inp.value;
+  inp.closest('.preco-item').classList.toggle('mudou', precosPendentes().some(x=>x.id===id));
+  atualizarPrecosBadge();
+});
+h('p_busca').addEventListener('input', renderPrecos);
+
+/** Produtos com preço alterado (e válido) → payload [{ id, preco }]. */
 function precosPendentes(){
   const out = [];
   for(const p of PRODUTOS){
     const e = EDICOES[p.id];
-    if(!e) continue;
-    const linha = { id: p.id };
-    let mudou = false;
-    if(e.preco !== undefined){
-      const n = paraNum(e.preco);
-      if(n != null && n !== p.preco){ linha.preco = n; mudou = true; }
-    }
-    if(e.precoClube !== undefined){
-      const txt = String(e.precoClube).trim();
-      if(txt === '' && p.precoClube != null){ linha.precoClube = ''; mudou = true; }
-      else if(txt !== ''){
-        const n = paraNum(txt);
-        if(n != null && n !== p.precoClube){ linha.precoClube = n; mudou = true; }
-      }
-    }
-    if(mudou) out.push(linha);
+    if(!e || e.preco === undefined) continue;
+    const n = paraNum(e.preco);
+    if(n != null && n !== p.preco) out.push({ id: p.id, preco: n });
   }
   return out;
 }
-function linhaMudou(id){ return precosPendentes().some(x=>x.id===id); }
+
+function marcarSecoesAlteradas(){
+  const cats = new Set(precosPendentes().map(x=>PRODUTOS.find(p=>p.id===x.id)?.categoria));
+  document.querySelectorAll('#precosLista .secao').forEach(s=>s.classList.toggle('tem-mudanca', cats.has(s.dataset.cat)));
+}
 
 function atualizarPrecosBadge(){
   const n = precosPendentes().length;
@@ -513,6 +531,7 @@ function atualizarPrecosBadge(){
   else badge.style.display='none';
   h('p_salvar').disabled = n === 0;
   h('p_salvar').textContent = n ? `Salvar ${n} ${n===1?'preço':'preços'}` : 'Salvar preços';
+  marcarSecoesAlteradas();
 }
 
 async function salvarPrecos(){
@@ -529,181 +548,184 @@ async function salvarPrecos(){
   }
 }
 
-h('p_busca').addEventListener('input', renderPrecos);
-h('p_categoria').addEventListener('change', renderPrecos);
-
-/** Exclui o produto do catálogo do mercado (não afeta ofertas já publicadas). */
+/** Exclui o produto do catálogo (e a promoção dele, se tiver). */
 async function excluirProduto(id){
   const p = PRODUTOS.find(x=>x.id===id);
   const nome = p ? p.nome : 'este produto';
   if(!confirm(`Excluir "${nome}" do catálogo? Isso não pode ser desfeito.`)) return;
   try{
     await req('/admin/produtos/'+id, { method:'DELETE' });
+    if(OFERTAS.some(o=>o.id===idOferta(id))) await req('/admin/ofertas/'+idOferta(id), { method:'DELETE' });
     delete EDICOES[id];
+    await carregarOfertas();
     await carregarPrecos();
   }catch(e){ alert(e.message); }
 }
 
-/** Pré-preenche o formulário de oferta com os dados desse produto — só ajustar o preço promocional. */
+async function encerrarPromocao(idDaOferta){
+  if(!confirm('Encerrar esta promoção agora? O produto volta ao preço normal no app.')) return;
+  try{
+    await req('/admin/ofertas/'+idDaOferta, { method:'DELETE' });
+    await carregarOfertas();
+  }catch(e){ alert(e.message); }
+}
+
+// ---------- Nova oferta (nome + preço normal + preço da promoção + data) ----------
+let PRODUTO_OFERTA = null;   // produto do catálogo escolhido (null = nome digitado à mão)
+
+function aoDigitarProduto(){
+  const valor = h('f_nome').value.trim();
+  const p = PRODUTOS.find(x=>nomeCompleto(x) === valor) || null;
+  PRODUTO_OFERTA = p;
+  if(p){
+    h('f_precoNormal').value = moeda(p.preco);
+    const atual = OFERTAS.find(o=>o.id===idOferta(p.id) && ofertaAtiva(o));
+    if(atual){
+      h('f_precoOferta').value = moeda(atual.precoOferta);
+      h('f_validade').value = isoParaDataLocal(atual.validade);
+    }
+    h('f_dica').textContent = atual ? 'Este produto já está em promoção — salvar substitui a atual.' : '';
+  }else{
+    h('f_dica').textContent = valor ? 'Produto fora do catálogo: informe o preço normal (aparece em "Mercearia" no app).' : '';
+  }
+}
+h('f_nome').addEventListener('input', aoDigitarProduto);
+
+function limparForm(){
+  h('f_nome').value = '';
+  h('f_precoNormal').value = '';
+  h('f_precoOferta').value = '';
+  h('f_validade').value = daquiADias(7);
+  h('f_dica').textContent = '';
+  PRODUTO_OFERTA = null;
+}
+
+/** Pré-preenche a oferta com esse produto — só falta o preço da promoção. */
 function criarOfertaDoProduto(id){
   const p = PRODUTOS.find(x=>x.id===id);
   if(!p) return;
   limparForm();
-  h('f_nome').value = p.nome + (p.marca ? ' ' + p.marca : '');
-  h('f_categoria').value = p.categoria;
-  h('f_unidade').value = p.unidade || '';
-  h('f_precoNormal').value = p.preco ?? '';
-  h('f_precoOferta').value = '';
-  h('f_precoClube').value = p.precoClube ?? '';
-  h('f_imagem').value = typeof p.imagem === 'string' ? p.imagem : '';
+  abrirCard('cardOferta');
+  h('f_nome').value = nomeCompleto(p);
+  aoDigitarProduto();
   window.scrollTo({ top: h('formTitulo').getBoundingClientRect().top + window.scrollY - 12, behavior:'smooth' });
   h('f_precoOferta').focus();
 }
 
-async function carregarAviso(){
-  try{
-    const a = await req('/admin/aviso');
-    if(!a) return;
-    h('a_ativo').checked = a.ativo !== false;
-    h('a_titulo').value = a.titulo || '';
-    h('a_subtitulo').value = a.subtitulo || '';
-    h('a_linhas').value = (a.linhas || []).join('\n');
-    h('a_destaque').value = a.destaque || '';
-    h('a_rodape').value = a.rodape || '';
-    h('a_telefone').value = a.telefone || '';
-    h('a_expira').value = (a.expira || '').slice(0,10);
-  }catch{}
-}
-
-async function salvarAviso(){
-  const body = {
-    ativo: h('a_ativo').checked,
-    titulo: h('a_titulo').value.trim(),
-    subtitulo: h('a_subtitulo').value.trim(),
-    linhas: h('a_linhas').value.split('\n').map(s=>s.trim()).filter(Boolean),
-    destaque: h('a_destaque').value.trim(),
-    rodape: h('a_rodape').value.trim(),
-    telefone: h('a_telefone').value.replace(/\D/g,''),
-    expira: h('a_expira').value ? new Date(h('a_expira').value).toISOString() : undefined,
-  };
-  try{
-    await req('/admin/aviso', { method:'POST', body: JSON.stringify(body) });
-    aviso(h('avisoAviso'), body.titulo ? 'Aviso salvo!' : 'Aviso desativado.', 'ok');
-  }catch(e){ aviso(h('avisoAviso'), e.message, 'err'); }
-}
-
-function renderLista(ofertas){
-  if(!ofertas.length){ h('lista').innerHTML = '<small>Nenhuma oferta ainda.</small>'; return; }
-  h('lista').innerHTML = ofertas.map(o=>`
-    <div class="oferta">
-      <img src="${o.imagem}" alt="" />
-      <div class="info">
-        <div class="nome">${o.nome}
-          ${o.relampago ? '<span class="tag rel">⚡ relâmpago</span>' : ''}
-          <span class="tag">${o.categoria}</span>
-        </div>
-        <div><span class="preco">${brl(o.precoOferta)}</span>
-          <span class="antigo">${brl(o.precoNormal)}</span>
-          ${o.precoClube!=null ? ' • sócio '+brl(o.precoClube) : ''}
-        </div>
-      </div>
-      <button class="mini sec" onclick='editar(${JSON.stringify(o)})'>Editar</button>
-      <button class="mini perigo" onclick="remover('${o.id}')">Excluir</button>
-    </div>`).join('');
-}
-
-// <input type=date> ("2026-09-23") vira meia-noite UTC se usar `new Date(string)` direto —
-// no fuso do Brasil isso já é a noite do dia ANTERIOR, então uma oferta "válida até hoje"
-// nascia vencida. Monta a data pelos componentes (ano, mês, dia) pra ficar no fuso local.
-function dataParaFimDoDiaISO(dataStr){
-  const [y,m,d] = dataStr.split('-').map(Number);
-  return new Date(y, m-1, d, 23,59,59,999).toISOString();
-}
-function isoParaDataLocal(iso){
-  if(!iso) return '';
-  const d = new Date(iso);
-  const pad = n => String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
-}
-function isoParaDatetimeLocal(iso){
-  if(!iso) return '';
-  const d = new Date(iso);
-  const pad = n => String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function editar(o){
-  h('formTitulo').textContent = 'Editar oferta';
-  h('f_id').value = o.id;
-  h('f_nome').value = o.nome;
-  h('f_descricao').value = o.descricao || '';
-  h('f_categoria').value = o.categoria;
-  h('f_unidade').value = o.unidade || '';
-  h('f_validade').value = isoParaDataLocal(o.validade);
-  h('f_precoNormal').value = o.precoNormal;
-  h('f_precoOferta').value = o.precoOferta;
-  h('f_precoClube').value = o.precoClube ?? '';
-  h('f_imagem').value = o.imagem || '';
-  h('f_relampago').checked = !!o.relampago;
-  h('relampagoCampos').style.display = o.relampago ? 'block' : 'none';
-  h('f_relampagoFim').value = isoParaDatetimeLocal(o.relampagoFim);
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-
-function limparForm(){
-  ['f_id','f_nome','f_descricao','f_unidade','f_validade','f_precoNormal',
-   'f_precoOferta','f_precoClube','f_imagem','f_relampagoFim'].forEach(id=>h(id).value='');
-  h('f_relampago').checked = false;
-  h('relampagoCampos').style.display = 'none';
-  h('formTitulo').textContent = 'Nova oferta';
-}
-
 async function salvarOferta(){
+  const nome = h('f_nome').value.trim();
+  const precoNormal = paraNum(h('f_precoNormal').value);
+  const precoOferta = paraNum(h('f_precoOferta').value);
+  const data = h('f_validade').value;
+  const erro = !nome ? 'Informe o nome do produto.'
+    : precoNormal == null ? 'Informe o preço normal.'
+    : precoOferta == null ? 'Informe o preço da promoção.'
+    : precoOferta >= precoNormal ? 'O preço da promoção precisa ser menor que o preço normal.'
+    : !data ? 'Escolha a data da oferta.'
+    : data < daquiADias(0) ? 'A data da oferta precisa ser hoje ou depois.'
+    : null;
+  if(erro){ aviso(h('formAviso'), erro, 'err'); return; }
+  const p = PRODUTO_OFERTA;
   const body = {
-    id: h('f_id').value || undefined,
-    nome: h('f_nome').value.trim(),
-    descricao: h('f_descricao').value.trim(),
-    categoria: h('f_categoria').value,
-    unidade: h('f_unidade').value.trim(),
-    validade: h('f_validade').value ? dataParaFimDoDiaISO(h('f_validade').value) : undefined,
-    precoNormal: h('f_precoNormal').value,
-    precoOferta: h('f_precoOferta').value,
-    precoClube: h('f_precoClube').value,
-    imagem: h('f_imagem').value.trim(),
-    relampago: h('f_relampago').checked,
-    relampagoFim: h('f_relampagoFim').value ? new Date(h('f_relampagoFim').value).toISOString() : undefined,
+    id: p ? idOferta(p.id) : undefined,
+    nome,
+    categoria: p ? p.categoria : undefined,
+    unidade: p ? p.unidade : undefined,
+    precoNormal,
+    precoOferta,
+    validade: dataParaFimDoDiaISO(data),
   };
   try{
     await req('/admin/ofertas', { method:'POST', body: JSON.stringify(body) });
     aviso(h('formAviso'), 'Oferta salva!', 'ok');
-    limparForm(); carregar();
+    limparForm();
+    await carregarOfertas();
   }catch(e){ aviso(h('formAviso'), e.message, 'err'); }
 }
 
-async function remover(id){
-  if(!confirm('Excluir esta oferta?')) return;
-  try{ await req('/admin/ofertas/'+id, { method:'DELETE' }); carregar(); }
-  catch(e){ alert(e.message); }
+// ---------- Aviso de abertura (título + descrição + duração) ----------
+async function carregarAviso(){
+  try{
+    const a = await req('/admin/aviso');
+    const st = h('avisoStatus');
+    if(!a){ st.textContent = 'Nenhum aviso ativo no momento.'; return; }
+    h('a_titulo').value = a.titulo || '';
+    h('a_descricao').value = a.subtitulo || '';
+    if(a.ativo === false) st.textContent = 'Aviso desativado.';
+    else if(a.expira && new Date(a.expira).getTime() <= Date.now()) st.textContent = 'Aviso expirado em ' + dataHoraCurta(a.expira) + '.';
+    else st.textContent = a.expira ? 'No ar até ' + dataHoraCurta(a.expira) + '.' : 'No ar (sem data para acabar).';
+  }catch{}
 }
 
-async function dispararRelampago(){
+async function salvarAviso(){
+  const titulo = h('a_titulo').value.trim();
+  if(!titulo){ aviso(h('avisoAviso'), 'Informe o título (ou clique em "Desativar aviso").', 'err'); return; }
+  const horas = Number(h('a_duracao').value);
   const body = {
-    ofertaId: h('r_ofertaId').value || undefined,
-    titulo: h('r_titulo').value.trim(),
-    mensagem: h('r_mensagem').value.trim(),
+    id: 'aviso-' + Date.now(),   // id novo a cada salvar: quem já fechou o aviso de antes vê o novo
+    ativo: true,
+    titulo,
+    subtitulo: h('a_descricao').value.trim(),
+    linhas: [],
+    expira: new Date(Date.now() + horas*36e5).toISOString(),
   };
-  if(!body.titulo || !body.mensagem){ aviso(h('pushAviso'),'Preencha título e mensagem.','err'); return; }
+  try{
+    const salvo = await req('/admin/aviso', { method:'POST', body: JSON.stringify(body) });
+    aviso(h('avisoAviso'), 'Aviso salvo!', 'ok');
+    h('avisoStatus').textContent = 'No ar até ' + dataHoraCurta(salvo.expira) + '.';
+  }catch(e){ aviso(h('avisoAviso'), e.message, 'err'); }
+}
+
+async function desativarAviso(){
+  if(!confirm('Desativar o aviso de abertura?')) return;
+  try{
+    await req('/admin/aviso', { method:'POST', body: JSON.stringify({ titulo:'' }) });
+    h('a_titulo').value = ''; h('a_descricao').value = '';
+    h('avisoStatus').textContent = 'Nenhum aviso ativo no momento.';
+    aviso(h('avisoAviso'), 'Aviso desativado.', 'ok');
+  }catch(e){ aviso(h('avisoAviso'), e.message, 'err'); }
+}
+
+// ---------- Oferta relâmpago (push) ----------
+h('r_ofertaId').addEventListener('change', ()=>{
+  const o = OFERTAS.find(x=>x.id===h('r_ofertaId').value);
+  h('r_preco').value = o ? moeda(o.precoOferta) : '';
+});
+
+async function dispararRelampago(){
+  const oferta = OFERTAS.find(x=>x.id===h('r_ofertaId').value) || null;
+  const txtPreco = h('r_preco').value.trim();
+  const preco = txtPreco ? paraNum(txtPreco) : null;
+  const msg = h('r_mensagem').value.trim();
+  if(txtPreco && preco == null){ aviso(h('pushAviso'), 'Preço inválido.', 'err'); return; }
+  if(!preco && !msg){ aviso(h('pushAviso'), 'Informe o preço ou uma mensagem.', 'err'); return; }
+  if(oferta && preco && preco >= oferta.precoNormal){
+    aviso(h('pushAviso'), `O preço relâmpago precisa ser menor que o preço normal (${brl(oferta.precoNormal)}).`, 'err'); return;
+  }
   if(!confirm('Enviar notificação para todos os aparelhos?')) return;
   try{
+    // se o preço mudou, a oferta no app acompanha o que a notificação promete
+    if(oferta && preco && preco !== oferta.precoOferta){
+      await req('/admin/ofertas', { method:'POST', body: JSON.stringify({ ...oferta, precoOferta: preco }) });
+    }
+    const body = {
+      ofertaId: oferta ? oferta.id : undefined,
+      titulo: oferta ? oferta.nome : 'Oferta relâmpago',
+      mensagem: [preco ? 'Por apenas ' + brl(preco) : '', msg].filter(Boolean).join(' — '),
+    };
     const r = await req('/admin/relampago', { method:'POST', body: JSON.stringify(body) });
     aviso(h('pushAviso'), `Enviado para ${r.enviadas} de ${r.dispositivos} aparelho(s).`, 'ok');
-    carregar();
+    h('r_mensagem').value = '';
+    await carregarOfertas();
   }catch(e){ aviso(h('pushAviso'), e.message, 'err'); }
 }
 
-// preenche o campo pra não precisar colar de novo, mas NÃO entra sozinho —
-// só mostra o painel depois de clicar em "Entrar" (mesmo com token salvo).
-if(TOKEN){ h('token').value = TOKEN; }
+// ---------- início ----------
+{
+  // não deixa escolher uma validade que já passou
+  h('f_validade').min = daquiADias(0);
+  h('f_validade').value = daquiADias(7);
+}
 </script>
 </body>
 </html>

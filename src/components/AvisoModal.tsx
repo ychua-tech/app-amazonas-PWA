@@ -53,17 +53,19 @@ export function AvisoModal({
 
             {aviso.subtitulo && <Text style={styles.subtitulo}>{aviso.subtitulo}</Text>}
 
-            <View style={styles.destaqueBox}>
-              <Ionicons name="time-outline" size={26} color={colors.primary} />
-              <View style={{ flex: 1 }}>
-                {aviso.linhas.map((l) => (
-                  <Text key={l} style={styles.linha}>
-                    {l}
-                  </Text>
-                ))}
-                {aviso.destaque && <Text style={styles.destaque}>{aviso.destaque}</Text>}
+            {((aviso.linhas ?? []).length > 0 || !!aviso.destaque) && (
+              <View style={styles.destaqueBox}>
+                <Ionicons name="time-outline" size={26} color={colors.primary} />
+                <View style={{ flex: 1 }}>
+                  {(aviso.linhas ?? []).map((l) => (
+                    <Text key={l} style={styles.linha}>
+                      {l}
+                    </Text>
+                  ))}
+                  {aviso.destaque && <Text style={styles.destaque}>{aviso.destaque}</Text>}
+                </View>
               </View>
-            </View>
+            )}
 
             {aviso.rodape && <Text style={styles.rodape}>{aviso.rodape}</Text>}
 
